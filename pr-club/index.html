@@ -7,10 +7,11 @@
 <meta name="description" content="Gym training in 4-week blocks, with levels, records and timers.">
 <meta name="theme-color" content="#0B1026">
 <meta name="color-scheme" content="dark">
-<!-- Home Screen app on iPhone and Android: full screen, dark status bar, its own icon -->
+<!-- Home Screen app on iPhone and Android: full screen with its own icon.
+     No apple-mobile-web-app-status-bar-style on purpose: with black-translucent, iOS 26.1+ draws a dark gradient
+     over the top of the app. Without it the status bar takes the page colour (Apple's advice, WebKit bug 317153). -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PR Club">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -131,7 +132,7 @@ label.lab,div.lab{display:flex;flex-direction:column;gap:5px;font-size:12px;font
 .empty{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .empty h2{font-family:var(--display);font-weight:800;font-size:32px;text-transform:uppercase;line-height:1}
 
-.wo{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.wo{position:fixed;inset:0;z-index:50;background:rgba(11,16,38,.995);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .wo-in{max-width:480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;display:flex;flex-direction:column;gap:12px;min-height:100%}
 .wo-top{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:calc(env(safe-area-inset-top,0px) + 10px);padding-bottom:10px;display:flex;flex-direction:column;gap:10px}
 .wo-row{display:flex;align-items:center;gap:10px}
@@ -470,8 +471,8 @@ body.wo-open .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)}
 .sheet-x svg{width:20px;height:20px}
 .sheet h3{padding-right:48px}
 .sheet h3:focus{outline:none}
-.wo:has(.player.rest){background:#0A1433}
-.wo:has(.player.ready){background:#141326}
+.wo:has(.player.rest){background:rgba(10,20,51,.995)}
+.wo:has(.player.ready){background:rgba(20,19,38,.995)}
 .glossary{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin-top:8px;color:var(--muted);font-size:14px}
 .glossary b{color:var(--ink)}
 @media (max-width:379px){.who-btn .nm{display:none}.who-btn{padding:4px 10px 4px 6px}}
@@ -555,6 +556,15 @@ body.wo-open .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)}
 .file-btn{position:relative;overflow:hidden;align-self:flex-start}
 .file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
 a.btn{text-decoration:none}
+/* iPhone: keyboard open (kb-open), Safari 26 fixed-layer quirks, no accidental text selection */
+body.kb-open .tabbar,body.kb-open .wo-foot{display:none}
+body.kb-open .wo-top{position:static}
+.sheet{bottom:var(--kb,0px)}
+body.kb-open .sheet{max-height:calc(var(--vvh,88dvh) - 12px);padding-bottom:12px}
+body.kb-open .toast{bottom:calc(var(--kb,0px) + 12px)}
+button,.tab,.chip,.tick,.rnd,.wcard,.pcard,.lvl-chip,.who-btn,.prev{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.a2hs{position:relative;display:flex;gap:10px;align-items:flex-start;margin-top:calc(env(safe-area-inset-top,0px) + 10px);background:var(--surface-2);border-radius:14px;padding:12px 56px 12px 14px;font-size:14px;line-height:1.4;box-shadow:inset 0 0 0 1px var(--accent)}
+.a2hs .sheet-x{top:4px;right:4px;background:transparent}
 /* Settings sheet */
 .set-sec{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid var(--line)}
 .set-sec.first{border-top:0;padding-top:0}
@@ -1468,7 +1478,7 @@ function migrate(s){
 }
 function save(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
 let state=load()||seed();
-const ui={mode:null,open:null,bodyMetric:'weight',progEx:null,progMetric:'top',st:null,tickAt:{},openAt:{},undo:null,sheetOpen:false,sheetFrom:null,woOpen:false,swapSid:null,swapQ:'',planFam:null,planLevel:null,circF:'All',lgType:'kg',setup:null,player:null,hiit:null,noteOpen:{}};
+const ui={mode:null,open:null,bodyMetric:'weight',progEx:null,progMetric:'top',st:null,tickAt:{},openAt:{},tabY:{},lockY:0,locked:false,undo:null,sheetOpen:false,sheetFrom:null,woOpen:false,swapSid:null,swapQ:'',planFam:null,planLevel:null,circF:'All',lgType:'kg',setup:null,player:null,hiit:null,noteOpen:{}};
 
 const prof=()=>(state.active&&state.profiles[state.active])||null;
 function addProfile(pr){pr.c=Object.keys(state.profiles).length%AVC.length;state.profiles[pr.id]=pr;state.active=pr.id;state.tab='train';ui.planFam=null;ui.progEx=null;save();render();}
@@ -1934,7 +1944,8 @@ const avatar=q=>`<span class="av" style="background:${AVC[q.c||0]}">${esc((q.nam
 function header(){
   const p=prof();
   const g=game(p);
-  return `<header class="top"><div class="brand">${IC.logo}<span class="brand-name">PR Club</span></div>
+  const hint=showA2HS()?`<div class="a2hs" role="note"><span><b>Best as an app.</b> Tap Share, then <b>Add to Home Screen</b>. It opens full screen and keeps its data more reliably.</span><button type="button" class="sheet-x" data-act="a2hs-x" aria-label="Dismiss">${IC.x}</button></div>`:'';
+  return hint+`<header class="top"><div class="brand">${IC.logo}<span class="brand-name">PR Club</span></div>
   <div class="top-r"><button type="button" class="lvl-chip" data-act="tab" data-id="progress" aria-label="Level ${g.level}. Open records">LVL ${g.level}</button><div class="who"><button type="button" class="who-btn on" data-act="settings" aria-label="Settings. ${esc(p.name)} is training">${avatar(p)}<span class="nm">${esc(p.name)}</span><span class="gear">${IC.gear}</span></button></div></div></header>`;
 }
 function welcomeView(){
@@ -2508,7 +2519,8 @@ const cue=(()=>{let ctx=null;
 const wake={lock:null,want:false,
   async on(){this.want=true;try{if(!this.lock&&navigator.wakeLock&&document.visibilityState==='visible'){this.lock=await navigator.wakeLock.request('screen');this.lock.addEventListener('release',()=>{this.lock=null;});}}catch(e){this.lock=null;}},
   off(){this.want=false;try{if(this.lock)this.lock.release();}catch(e){}this.lock=null;}};
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(wake.want)wake.on();updatePlayer();updateSetTimer();}});
+/* Coming back from YouTube or the lock screen: keep the screen awake again, catch the timers up, and wake the beeps (iPhone suspends sound in the background) */
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(wake.want)wake.on();cue.unlock();updatePlayer();updateSetTimer();}});
 /* Screen-reader announcement for step changes (the countdown itself stays quiet) */
 function announce(msg){const el=$('#sr-live');if(el){el.textContent='';setTimeout(()=>{el.textContent=msg;},30);}}
 
@@ -2730,7 +2742,7 @@ function render(){
 function renderOverlay(){const wo=$('#wo');const st=wo.scrollTop;$('#wo-body').innerHTML=ui.mode==='workout'?workoutHTML():ui.mode==='setup'?setupHTML():ui.mode==='player'?playerHTML():'';wo.scrollTop=st;if(ui.mode==='workout')paintSetTimer();}
 function openOverlay(){const wo=$('#wo');ui.woOpen=true;wo.hidden=false;syncLock();histSync();renderOverlay();wo.scrollTop=0;}
 function openWorkout(wid){if(ui.st&&ui.open!==wid)ui.st=null;ui.open=wid;{const p=prof();const k=sk(p,p.week,wid);ui.openAt[k]=ui.openAt[k]||Date.now();}ui.mode='workout';ui.noteOpen={};state.resume={wid,t:Date.now()};openOverlay();save();wake.on();}
-function closeOverlay(fromBack){const was=ui.woOpen;ui.open=null;ui.mode=null;ui.player=null;ui.st=null;ui.woOpen=false;$('#wo').hidden=true;syncLock();wake.off();if(state.resume){delete state.resume;save();}if(was&&!fromBack)histSync();render();}
+function closeOverlay(fromBack){const was=ui.woOpen;ui.open=null;ui.mode=null;ui.player=null;ui.st=null;ui.woOpen=false;$('#wo').hidden=true;syncLock();wake.off();if(state.resume){delete state.resume;save();}if(was&&!fromBack)histSync();render();if(!ui.sheetOpen)window.scrollTo(0,ui.lockY||0);}
 /* toast(msg) for a quick note; toast(msg, undoFn) adds an Undo button for five seconds */
 function toast(msg,undo){const t=$('#toast');t.innerHTML=`<span>${esc(msg)}</span>${undo?'<button type="button" class="toast-act" data-act="undo">Undo</button>':''}`;t.classList.toggle('act',!!undo);ui.undo=undo||null;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>{t.hidden=true;ui.undo=null;},undo?5000:2600);}
 /* Phone back button and back swipe. While a sheet or the workout/timer overlay is open, one extra "guard" history entry exists,
@@ -2744,7 +2756,10 @@ function histSync(){
   if(layersOpen()&&!hist.guard){try{history.pushState({prc:1},'');hist.guard=true;}catch(e){hist.ok=false;}return;}
   if(!layersOpen()&&hist.guard){clearTimeout(hist.t);hist.t=setTimeout(()=>{if(!layersOpen()&&hist.guard){hist.guard=false;hist.skip++;try{history.back();}catch(e){hist.skip--;}}},80);}
 }
-function syncLock(){document.body.style.overflow=ui.sheetOpen||ui.woOpen?'hidden':'';document.body.classList.toggle('wo-open',!!ui.woOpen);}
+/* While a sheet or the workout overlay is open the page behind can't scroll. lockY remembers where it was,
+   because iPhone can still shift the page behind when the keyboard opens, and it's put back afterwards. */
+function syncLock(){const lock=!!(ui.sheetOpen||ui.woOpen);if(lock&&!ui.locked)ui.lockY=window.scrollY;ui.locked=lock;
+  document.body.style.overflow=lock?'hidden':'';document.body.classList.toggle('wo-open',!!ui.woOpen);}
 /* sheet(html) opens or replaces the bottom sheet; sheet('') closes it. fromBack: closed by the phone's Back, so history already moved. */
 function sheet(html,fromBack){
   const root=$('#sheet-root');
@@ -2771,6 +2786,39 @@ window.addEventListener('popstate',()=>{
   if(ui.mode==='setup'&&ui.setup&&ui.setup.step>0){ui.setup.step--;if(ui.setup.step<QS.length)ui.setup.picks=null;renderOverlay();return;}
   closeOverlay(true);
 });
+/* ----- Phone keyboard -----
+   iPhone keeps the keyboard open until you tap another text box or its Done key, so:
+   - a tap outside a text box, or a drag of more than a few pixels, closes it
+   - while it's open the tab bar and set timer step aside, the workout header stops pinning, and sheets sit just above it
+   - when it closes, the page is put back where it was, because iPhone can leave bars and overlays shifted */
+const TEXTY='input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select';
+const typing=()=>{const a=document.activeElement;return a&&a.matches&&a.matches(TEXTY)?a:null;};
+function dismissKeyboard(){const a=typing();if(a)a.blur();}
+let kbTouch=null;
+document.addEventListener('touchstart',ev=>{kbTouch=typing()?{x:ev.touches[0].clientX,y:ev.touches[0].clientY,t:ev.target}:null;},{passive:true});
+document.addEventListener('touchmove',ev=>{if(!kbTouch)return;const t=ev.touches[0];if(Math.abs(t.clientX-kbTouch.x)+Math.abs(t.clientY-kbTouch.y)>12){dismissKeyboard();kbTouch=null;}},{passive:true});
+document.addEventListener('touchend',()=>{if(!kbTouch)return;const t=kbTouch.t;kbTouch=null;if(!(t.closest&&t.closest(TEXTY+',label')))dismissKeyboard();},{passive:true});
+/* The keyboard's height comes from the visual viewport: the layout stays full height while the visible part shrinks.
+   Pinch-zoom also shrinks the visible part, so only an unzoomed shrink counts as the keyboard. */
+let kbOpen=false;
+function kbSync(v){
+  v=v||window.visualViewport;if(!v)return;
+  const kb=Math.abs(v.scale-1)<0.05?Math.max(0,Math.round(window.innerHeight-v.height-v.offsetTop)):0;const open=kb>120;
+  const r=document.documentElement.style;r.setProperty('--kb',(open?kb:0)+'px');r.setProperty('--vvh',Math.round(v.height)+'px');
+  document.body.classList.toggle('kb-open',open);
+  if(kbOpen&&!open)setTimeout(settleAfterKeyboard,60);
+  kbOpen=open;
+}
+function settleAfterKeyboard(){
+  if(ui.sheetOpen||ui.woOpen)window.scrollTo(0,ui.lockY||0);else window.scrollTo(window.scrollX,window.scrollY);
+  const bar=$('.tabbar');if(bar){bar.style.display='none';void bar.offsetHeight;bar.style.display='';}
+}
+if(window.visualViewport){visualViewport.addEventListener('resize',()=>kbSync());visualViewport.addEventListener('scroll',()=>kbSync());}
+/* In Safari on iPhone (not the Home Screen app), point people to Add to Home Screen once: Safari's floating toolbar
+   fights with the bottom tab bar, and the Home Screen app also keeps its data more reliably */
+const isIOS=/iP(hone|od|ad)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const standalone=(()=>{try{return navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;}catch(e){return false;}})();
+const showA2HS=()=>isIOS&&!standalone&&!framed&&!state.a2hsSeen;
 /* Drag a sheet down from its top to dismiss it */
 let sheetDrag=null;
 document.addEventListener('touchstart',ev=>{const sh=ev.target.closest('.sheet');if(!sh||sh.scrollTop>0||ev.target.closest('input,select,textarea'))return;sheetDrag={y:ev.touches[0].clientY,sh,dy:0};},{passive:true});
@@ -2789,6 +2837,7 @@ setInterval(()=>{updateSetTimer();updatePlayer();},250);
 /* ================= Actions ================= */
 function curSession(){const p=prof();const w=planWorkouts(p).find(x=>x.id===ui.open);return {p,w,s:ensureSession(p,p.week,w),key:sk(p,p.week,w.id)};}
 function tick(sid,i){
+  dismissKeyboard();
   const {p,w,s,key}=curSession();const e=s.ex[sid];const st=e.sets[i];
   /* A second tap within 0.8 s is a double-tap, not a request to un-log the set */
   if(st.done){if(Date.now()-(ui.tickAt[sid+':'+i]||0)<800)return;st.done=false;save();renderOverlay();return;}
@@ -2906,7 +2955,9 @@ document.addEventListener('click',ev=>{
   cue.unlock();
   const a=ev.target.closest('[data-act]');if(!a)return;const act=a.dataset.act;const p=prof();
   switch(act){
-    case 'tab':state.tab=a.dataset.id;save();sheet('');render();window.scrollTo(0,0);break;
+    case 'tab':{const to=a.dataset.id,fromBar=a.classList.contains('tab');
+      if(to===state.tab){window.scrollTo({top:0,behavior:'smooth'});break;}
+      ui.tabY[state.tab]=window.scrollY;state.tab=to;save();sheet('');render();window.scrollTo(0,fromBar?(ui.tabY[to]||0):0);break;}
     case 'settings':settingsSheet();break;
     case 'switch':state.active=a.dataset.id;ui.planFam=null;ui.progEx=null;save();sheet('');render();window.scrollTo(0,0);break;
     case 'start':case 'addp':{const el=$(act==='start'?'#w-name':'#np-name');const n=cleanName(el&&el.value);if(!n){toast('Type a name first');if(el)el.focus();break;}sheet('');addProfile(blankProfile(uid(),n));toast(`Welcome, ${n}`);break;}
@@ -2974,6 +3025,7 @@ document.addEventListener('click',ev=>{
     case 'gobody':state.tab='body';save();sheet('');render();setTimeout(()=>{const el=$('#body-settings');if(el)window.scrollTo(0,el.getBoundingClientRect().top+scrollY-70);},60);break;
     case 'resetdemo':settingsSheet('demo');break;
     case 'backup':backupSheet();break;
+    case 'a2hs-x':state.a2hsSeen=true;save();render();break;
     case 'backup-copy':{const el=$('#bk-out');const txt=el?el.value:'';
       const done=()=>toast('Backup copied');const fallback=()=>{if(el){el.focus();el.select();try{document.execCommand('copy');done();}catch(e){toast('Select the text and copy it');}}};
       if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fallback);else fallback();break;}

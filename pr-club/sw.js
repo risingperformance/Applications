@@ -1,7 +1,7 @@
 /* PR Club offline support.
    The page itself is fetched fresh whenever there's signal (so updates show up), with the saved copy used when offline.
    Icons and fonts are served from the cache once fetched. Change VERSION to clear old caches after big changes. */
-const VERSION = 'pr-club-v1';
+const VERSION = 'pr-club-v2';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', event => {
