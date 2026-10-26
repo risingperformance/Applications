@@ -352,7 +352,7 @@ table.tbl{border-collapse:collapse;font-size:13px;min-width:100%;font-variant-nu
 .pc-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .pc-top{display:flex;justify-content:space-between;align-items:baseline;gap:2px 8px;flex-wrap:wrap}
 .pc-name{font-weight:800;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rank{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.rank{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;overflow-wrap:anywhere}
 .xpbar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
 .xpbar i{display:block;height:100%;background:var(--accent);border-radius:5px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
 .pc-meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
@@ -424,7 +424,7 @@ table.tbl{border-collapse:collapse;font-size:13px;min-width:100%;font-variant-nu
 @keyframes xpUp{0%{transform:translateY(16px);opacity:0}100%{transform:none;opacity:1}}
 /* Level-up: everything picks up the tier colour from --tc / --tg / --tg2 / --tr set on the .fx element */
 .fx.lvl .fx-k{text-shadow:0 0 14px var(--tg,rgba(61,245,255,.9)),0 0 34px var(--tg2,rgba(61,245,255,.5))}
-.fx.lvl.big .fx-k{font-size:46px}
+.fx.lvl.big .fx-k{font-size:clamp(32px,11vw,46px);white-space:nowrap}
 .fx.lvl .fx-icon{filter:drop-shadow(0 0 22px var(--tg2,rgba(61,245,255,.6)));animation:crownIn .8s cubic-bezier(.2,.9,.3,1.35) both,hexPulse 1.6s 1.1s ease-in-out infinite}
 .fx.lvl .fx-type{background:var(--tc,var(--accent))}
 .fx.lvl .fx-rings i{border-color:var(--tc,var(--accent))}
@@ -1636,6 +1636,43 @@ const LADDER_SRC=[
 ];
 const LADDER=(()=>{let at=0;return LADDER_SRC.map(([cost,name,line],i)=>{at+=cost;return {n:i+1,cost,at,name,line,tier:TIERS[Math.floor(i/5)]};});})();
 const MAX_LEVEL=LADDER.length;
+/* Adult names, switched on per person in Settings. Cheeky Aussie gym slang with mild swearing, nothing explicit.
+   Same XP, tiers and colours as the standard ladder, so levels still compare across the family. */
+const ADULT_SRC=[
+  ['Dad Bod','Everyone starts somewhere. Some start with a beer gut.'],
+  ['Couch Escapee','The couch misses you. Tough.'],
+  ['Sore Arse','Leg day happened. Stairs are the enemy now.'],
+  ['Huff and Puff','Breathing like a busted accordion.'],
+  ['Not Dead Yet','Five sessions in and still breathing. Just.'],
+  ['Sweaty Bastard','Leaving puddles wherever you go.'],
+  ['Chalk Hog','Hands like a powdered doughnut.'],
+  ['Pump Junkie',"Can't walk past a mirror now."],
+  ['Grunt Merchant','Every rep comes with sound effects.'],
+  ['Gym Rat',"You know the cleaner's name."],
+  ['Protein Farter','Clearing rooms since the third shake.'],
+  ['Rack Hog','Nobody else is getting the squat rack.'],
+  ['Swole Patrol','Sleeves are a suggestion.'],
+  ['Thick Neck','Collars have stopped buttoning.'],
+  ['Iron Arse','Halfway up, and your glutes have opinions.'],
+  ['Bench Menace','Hogging the bench and loving it.'],
+  ['Squats Like Hell','Depth is not optional. Neither is swearing.'],
+  ['Deadlift Demon','Pulling heavy, grunting louder.'],
+  ['Shredded AF','The abs are making an appearance.'],
+  ['Hard Bastard','Welcome to the hard yards.'],
+  ['Built Like a Brick Shithouse','Solid. Unshakeable. Slightly confronting.'],
+  ['Animal','Feed after sessions. Do not approach.'],
+  ['Lunchtime Legend',"A legend in your own lunchtime. And everyone else's."],
+  ['Big Bloody Unit','Doorways are getting narrow.'],
+  ['Freak of Nature','People stop and watch.'],
+  ['Mutant','Normal clothes have given up.'],
+  ['Hench as Hell','The gym floor answers to you.'],
+  ['Top Dog','Everyone else is fighting for second.'],
+  ['Bloody Legend','One level from the top.'],
+  ['Absolute Weapon','Top of the club, mate. Nothing left to prove.']
+];
+const LADDER_ADULT=LADDER.map((l,i)=>Object.assign({},l,{name:ADULT_SRC[i][0],line:ADULT_SRC[i][1]}));
+const adultNames=p=>!!(p&&p.names==='adult');
+const ladderFor=p=>adultNames(p)?LADDER_ADULT:LADDER;
 const WEEK_LEVEL=20;               /* from here a level takes about a week of training */
 const ELITE_FROM=MAX_LEVEL-9;      /* the last ten levels */
 const ladderAt=n=>LADDER[Math.max(1,Math.min(n,MAX_LEVEL))-1];
@@ -1645,7 +1682,7 @@ const xpToNext=g=>g.level>=MAX_LEVEL?0:LADDER[g.level].at-g.xp;
 /* "1,234 XP to level 14" (optionally with the name), or the max-level line */
 function nextLine(g,withName){
   if(g.level>=MAX_LEVEL)return 'Max level. Top of the club.';
-  const nx=LADDER[g.level];return `${xpToNext(g).toLocaleString('en-AU')} XP to level ${nx.n}${withName?`, ${esc(nx.name)}`:''}`;
+  const nx=(g.ladder||LADDER)[g.level];return `${xpToNext(g).toLocaleString('en-AU')} XP to level ${nx.n}${withName?`, ${esc(nx.name)}`:''}`;
 }
 const hexA=(h,a)=>`rgba(${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)},${a})`;
 /* Exercises held for time (planks, carries) record total seconds rather than reps */
@@ -1747,7 +1784,8 @@ function game(p,skip){
   let cur=weekStart(isoToday());if(!(byWeek[cur]>=need))cur=addDays(cur,-7);let n=0;while(byWeek[cur]>=need){n++;cur=addDays(cur,-7);}st.streak=n;st.streakNeed=need;st.thisWeek=byWeek[weekStart(isoToday())]||0;
   st.bossDistinct=st.bossSet.size;st.famCount=st.fams.size;
   const level=levelOf(xp);
-  return {xp,xpAll,level,lv:LADDER[level-1],best,recs,per,st,paid};
+  const L=ladderFor(p);
+  return {xp,xpAll,level,lv:L[level-1],ladder:L,best,recs,per,st,paid};
 }
 const BADGES=[
   {id:'first',name:'First quest',d:'Finish your first workout',ic:'star',c:'#3DF5FF',v:s=>s.sessions,t:1},
@@ -1981,12 +2019,13 @@ function settingsSheet(confirm){
   const cf=(id,msg,yes,act)=>`<div class="confirm" id="cf"><p>${msg}</p><div class="row"><button type="button" class="btn ghost sm" data-act="settings">Cancel</button><button type="button" class="btn sm danger" data-act="${act}">${yes}</button></div></div>`;
   sheet(`<h3>Settings</h3>
   <div class="set-sec first"><h4>Who's training</h4>
-  <div class="plist">${Object.values(state.profiles).map(q=>{const on=p&&q.id===p.id;const qg=game(q);return `<button type="button" class="pcard${on?' cur':''}" data-act="switch" data-id="${q.id}" aria-pressed="${on}"><span style="display:flex;gap:10px;align-items:center;min-width:0">${avatar(q)}<span style="min-width:0"><b>${esc(q.name)}</b><small>Level ${qg.level} ${esc(qg.lv.name)} · ${q.plan?esc(progShort(PROGS[q.plan.prog])):'No plan yet'}</small></span></span>${on?'<span class="pill next">Active</span>':''}</button>`;}).join('')}</div>
+  <div class="plist">${Object.values(state.profiles).map(q=>{const on=p&&q.id===p.id;const qg=game(q);return `<button type="button" class="pcard${on?' cur':''}" data-act="switch" data-id="${q.id}" aria-pressed="${on}"><span style="display:flex;gap:10px;align-items:center;min-width:0">${avatar(q)}<span style="min-width:0"><b>${esc(q.name)}</b><small>Level ${qg.level}${adultNames(q)?'':' '+esc(qg.lv.name)} · ${q.plan?esc(progShort(PROGS[q.plan.prog])):'No plan yet'}</small></span></span>${on?'<span class="pill next">Active</span>':''}</button>`;}).join('')}</div>
   <div class="inline-add"><input class="field" id="np-name" maxlength="20" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Add a person" aria-label="New person's name"><button type="button" class="btn sm" data-act="addp">Add</button></div></div>
   ${p?`<div class="set-sec"><h4>${esc(p.name)}</h4>
     <div class="inline-add"><input class="field" id="rn-name" maxlength="20" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" value="${esc(p.name)}" aria-label="Name"><button type="button" class="btn ghost sm" data-act="renamep">Save name</button></div>
+    <label class="switch"><input type="checkbox" id="lv-adult" ${adultNames(p)?'checked':''}><span>Adult level names: cheeky gym slang with mild swearing. They show on ${esc(p.name)}'s own screens, not in the list above.</span></label>
     <div class="set-row"><span class="set-lv" style="color:${g.lv.tier.c}">${g.level}</span><span><b>${esc(g.lv.name)}</b><small>${g.xp.toLocaleString('en-AU')} XP${p.lvReset?` since ${fmtD(p.lvReset.date)} · ${g.xpAll.toLocaleString('en-AU')} lifetime`:''}</small></span></div>
-    ${confirm==='lv'?cf('lv',`Reset ${esc(p.name)} to level 1, ${esc(LADDER[0].name)}? Workouts, records, badges and streaks all stay. Only the level climb starts again.`,'Reset levels','lvreset-yes')
+    ${confirm==='lv'?cf('lv',`Reset ${esc(p.name)} to level 1, ${esc(ladderFor(p)[0].name)}? Workouts, records, badges and streaks all stay. Only the level climb starts again.`,'Reset levels','lvreset-yes')
       :g.level>1||g.xp>0?`<button type="button" class="btn ghost sm" data-act="lvreset">Reset levels to 1</button>`:''}
     ${p.lvReset&&confirm!=='lv'?`<p class="hint">Levels count from ${fmtD(p.lvReset.date)}. <button type="button" class="link" data-act="lvundo">Undo the reset</button></p>`:''}
     ${confirm==='del'?cf('del',`Remove ${esc(p.name)}? This deletes their workouts, measurements and goals on this phone. It can't be undone.`,'Remove','delp-yes')
@@ -1996,7 +2035,8 @@ function settingsSheet(confirm){
     ${(t=>`${sliderHTML('set','Time per set',t.set,'Do the set, rest for the rest of it')}
     <span class="sl-group">Circuits</span>${sliderHTML('circWork','Time per exercise',t.circWork)}${sliderHTML('circRest','Rest between rounds',t.circRest)}
     <span class="sl-group">HIIT</span>${sliderHTML('hiitWork','Work per move',t.hiitWork)}${sliderHTML('hiitRest','Rest between moves',t.hiitRest)}${sliderHTML('hiitRoundRest','Rest between rounds',t.hiitRoundRest)}
-    <label class="switch"><input type="checkbox" id="tm-sound" ${t.sound?'checked':''}><span>Beep for the last 3 seconds and at each change. On iPhone the ring/silent switch mutes beeps.</span></label>`)(timers(p))}
+    <label class="switch"><input type="checkbox" id="tm-sound" ${t.sound?'checked':''}><span>Beep for the last 3 seconds and at each change. Beeps play over Spotify or Apple Music. On iPhone the ring/silent switch mutes them.</span></label>
+    <button type="button" class="btn ghost sm" data-act="test-beep">Play a test beep</button>`)(timers(p))}
     <p class="hint">The screen stays on while a workout or timer is open.</p></div>
   <div class="set-sec"><h4>Body</h4><p class="hint">Height, age and sex sit with your measurements.</p><button type="button" class="btn ghost sm" data-act="gobody">Open body settings</button></div>`:''}
   <div class="set-sec"><h4>Data on this phone</h4>
@@ -2302,7 +2342,7 @@ function ladderHTML(g){
   return `<details class="how ladder"><summary>All ${MAX_LEVEL} levels</summary>
   <p class="hint">Levels 1 to ${WEEK_LEVEL-1} come thick and fast. Level ${WEEK_LEVEL} takes about a week of training on a 4-day plan, and each of the last ten takes a little longer than the one before. Level ${MAX_LEVEL} is roughly a full block on its own.</p>
   ${TIERS.map((t,ti)=>`<div class="lt"><span class="lt-h" style="color:${t.c}">${t.name} tier${ti*5+1>=ELITE_FROM?' · elite':''}</span>
-    ${LADDER.slice(ti*5,ti*5+5).map(l=>{const st=l.n<g.level?'done':l.n===g.level?'cur':'';
+    ${g.ladder.slice(ti*5,ti*5+5).map(l=>{const st=l.n<g.level?'done':l.n===g.level?'cur':'';
       return `<div class="lrow${st?' '+st:''}"${st==='cur'?' aria-current="step"':''}><span class="ln"${st?` style="color:${t.c}"`:''}>${l.n}</span><span class="lname">${esc(l.name)}${st==='cur'?'<small>You are here</small>':''}</span><span class="lxp">${l.at.toLocaleString('en-AU')}<small>${l.n===1?'start':'+'+l.cost.toLocaleString('en-AU')}</small></span></div>`;}).join('')}</div>`).join('')}
   </details>`;
 }
@@ -2503,17 +2543,28 @@ const durLabel=s=>s===0?'None':s<60?s+' s':s%60?mmss(s):(s/60)+' min';
 const elapsedOf=T=>((T.pausedAt||Date.now())-T.startAt)/1000;
 const READY_SECS=5;
 
-/* Beeps through Web Audio. iPhone only allows sound after a tap, so the first tap anywhere unlocks it.
-   iPhone mutes these when the ring/silent switch is on; Android can also buzz. */
+/* Beeps through Web Audio. iPhone only allows sound after a tap, so the first tap anywhere unlocks it; Android can also buzz.
+   Over music: by default iPhone won't let a web page's sound play on top of another app's audio (Spotify, Apple Music),
+   so the audio session asks for "transient" sound, the short notification kind that mixes with it (Safari 16.4 and later).
+   That has to be set before any sound starts. The catch is Apple's rule for mixable sound: the ring/silent switch mutes it.
+   If iPhone has paused the sound (another app took over, a call, the lock screen) it is resumed on the next tap or beep. */
+try{if(navigator.audioSession)navigator.audioSession.type='transient';}catch(e){}
 const cue=(()=>{let ctx=null;
-  const tone=(f,ms,vol)=>{const p=prof();if(!ctx||!timers(p).sound)return;try{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(vol,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+ms/1000);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+ms/1000+.05);}catch(e){}};
+  const play=(f,ms,vol,wave)=>{try{const o=ctx.createOscillator(),g=ctx.createGain();o.type=wave||'sine';o.frequency.value=f;
+    g.gain.setValueAtTime(vol,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+ms/1000);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+ms/1000+.05);}catch(e){}};
+  /* Plays now if sound is running; otherwise tries to resume and plays only if that's quick, so a beep never arrives late */
+  const tone=(f,ms,vol,wave)=>{const p=prof();if(!ctx||!timers(p).sound)return;
+    if(ctx.state==='running'){play(f,ms,vol,wave);return;}
+    const t0=Date.now();try{ctx.resume().then(()=>{if(Date.now()-t0<400)play(f,ms,vol,wave);}).catch(()=>{});}catch(e){}};
   const buzz=pat=>{try{if(navigator.vibrate)navigator.vibrate(pat);}catch(e){}};
   return {
-    unlock(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();}catch(e){}},
-    count(){tone(880,110,.22);buzz(30);},
-    go(){tone(1320,420,.32);buzz([180]);},
-    rest(){tone(620,420,.28);buzz([80,60,80]);},
-    done(){tone(990,160,.3);setTimeout(()=>tone(1320,160,.3),190);setTimeout(()=>tone(1760,380,.32),380);buzz([80,60,80,60,200]);}
+    unlock(){try{if(navigator.audioSession&&navigator.audioSession.type!=='transient')navigator.audioSession.type='transient';}catch(e){}
+      try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state!=='running')ctx.resume();}catch(e){}},
+    count(){tone(880,120,.45,'triangle');buzz(30);},
+    go(){tone(1320,450,.7,'triangle');buzz([180]);},
+    rest(){tone(620,450,.6,'triangle');buzz([80,60,80]);},
+    done(){tone(990,170,.55,'triangle');setTimeout(()=>tone(1320,170,.55,'triangle'),190);setTimeout(()=>tone(1760,400,.6,'triangle'),380);buzz([80,60,80,60,200]);},
+    state:()=>ctx?ctx.state:'none'
   };})();
 /* Keep the screen on while a workout or timer is open. Best effort: unsupported browsers just carry on. */
 const wake={lock:null,want:false,
@@ -3020,11 +3071,12 @@ document.addEventListener('click',ev=>{
     case 'move':{const k=a.dataset.k;p.moves[k]=p.moves[k]===false;save();render();break;}
     case 'autofix':{const n=autoFix(p);save();render();toast(n?`Swapped ${n} exercise${n>1?'s':''}`:'Nothing to swap');break;}
     case 'lvreset':settingsSheet('lv');break;
-    case 'lvreset-yes':{const g=game(p);p.lvReset={date:isoToday(),paid:g.paid};p.lvSeen=1;save();render();settingsSheet();toast(`${p.name} is back to level 1, ${LADDER[0].name}`);break;}
+    case 'lvreset-yes':{const g=game(p);p.lvReset={date:isoToday(),paid:g.paid};p.lvSeen=1;save();render();settingsSheet();toast(`${p.name} is back to level 1, ${ladderFor(p)[0].name}`);break;}
     case 'lvundo':{delete p.lvReset;p.lvSeen=game(p).level;save();render();settingsSheet();toast(`Levels restored. ${p.name} is level ${p.lvSeen} again`);break;}
     case 'gobody':state.tab='body';save();sheet('');render();setTimeout(()=>{const el=$('#body-settings');if(el)window.scrollTo(0,el.getBoundingClientRect().top+scrollY-70);},60);break;
     case 'resetdemo':settingsSheet('demo');break;
     case 'backup':backupSheet();break;
+    case 'test-beep':if(!timers(p).sound){toast('Beeps are switched off');break;}cue.unlock();setTimeout(()=>cue.go(),60);toast(cue.state()==='running'||cue.state()==='suspended'?'Beep. Nothing? Check the ring/silent switch and volume':'This browser has no sound for web pages');break;
     case 'a2hs-x':state.a2hsSeen=true;save();render();break;
     case 'backup-copy':{const el=$('#bk-out');const txt=el?el.value:'';
       const done=()=>toast('Backup copied');const fallback=()=>{if(el){el.focus();el.select();try{document.execCommand('copy');done();}catch(e){toast('Select the text and copy it');}}};
@@ -3098,6 +3150,7 @@ document.addEventListener('change',ev=>{
   else if(t.id==='trim'){p.plan.trim=t.checked;save();render();}
   else if(t.id==='wo-date'&&ui.open){const {s}=curSession();if(t.value)s.date=t.value;save();}
   else if(t.id==='prog-ex'){ui.progEx=t.value;render();}
+  else if(t.id==='lv-adult'){p.names=t.checked?'adult':'fun';save();render();settingsSheet();toast(t.checked?`Adult names on: ${game(p).lv.name}`:`Standard names: ${game(p).lv.name}`);}
   else if(t.id==='tm-sound'){p.timers=Object.assign({},p.timers,{sound:t.checked});save();if(t.checked){cue.unlock();cue.count();}}
   else if(t.dataset&&t.dataset.pick!=null&&ui.setup){const s=ui.setup.picks[+t.dataset.pick];s.on=t.checked;const off=new Set(ui.setup.off||[]);if(t.checked)off.delete(s.sid);else off.add(s.sid);ui.setup.off=[...off];}
   if(t.id==='bk-file'&&t.files&&t.files[0]){const r=new FileReader();r.onload=()=>{const box=$('#bk-in');if(box)box.value=String(r.result||'');toast(readBackup(r.result)?'Backup loaded. Tap Restore to use it':"That file isn't a PR Club backup");};r.readAsText(t.files[0]);}
