@@ -614,6 +614,18 @@ button,.tab,.chip,.tick,.rnd,.wcard,.pcard,.lvl-chip,.who-btn,.prev{-webkit-user
   width:max-content;max-width:calc(100% - 32px);min-height:48px;padding:10px 18px;border:0;border-radius:999px;background:var(--xp);color:#0B1026;
   font:700 15px/1.25 var(--body);text-align:left;box-shadow:0 6px 24px rgba(0,0,0,.45);animation:pop .35s cubic-bezier(.2,.9,.3,1.4) both;cursor:pointer}
 .snd-fix svg{width:22px;height:22px;flex:none}
+/* Plan tab: removed exercises, Add exercise, and the add sheet's sets and reps */
+.slot.removed .st b{text-decoration:line-through;color:var(--muted);font-weight:500}
+.slot.removed .icon-btn{font-size:13px}
+.add-ex{align-self:flex-start;margin-top:4px;display:inline-flex;align-items:center;gap:6px}
+.add-ex svg{width:16px;height:16px}
+.add-cfg{display:flex;flex-direction:column;gap:10px;margin:4px 0 12px}
+.add-row{display:flex;align-items:center;gap:12px}
+.add-k{flex:none;width:44px;font-weight:700;font-size:14px}
+.add-step{display:flex;align-items:center;gap:12px}
+.add-step b{min-width:22px;text-align:center;font-family:var(--display);font-size:20px}
+.add-step .sl-b:disabled{opacity:.35}
+.cover-note{margin:2px 0 0;color:var(--warn)}
 /* Last time's note on an exercise card */
 .ex-last-note{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:var(--gold-soft);box-shadow:inset 3px 0 0 var(--xp)}
 .ex-last-note .eln-k{display:block;margin-bottom:2px;font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--xp)}
@@ -655,6 +667,7 @@ button,.tab,.chip,.tick,.rnd,.wcard,.pcard,.lvl-chip,.who-btn,.prev{-webkit-user
 .lrow.cur{background:var(--surface-2);box-shadow:inset 0 0 0 2px var(--accent)}
 .lrow.cur .lname{color:var(--ink);font-weight:800}
 .lrow.cur .lxp{color:var(--ink)}
+.lrow.locked .lname{font-style:italic;font-weight:500;color:#8A94C4}
 @media (prefers-reduced-motion: reduce){.fx,.fx *,.qc-emb{animation:none!important}.fx-rings,.fx-rays{display:none}.xpbar i{transition:none}
   .fx.boss::before,.boss-whole,.boss-half,.boss-cut,.boss-shards{display:none}.boss-hp i{width:0}}
 </style>
@@ -1495,6 +1508,8 @@ const IC={
   next:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 5.5v13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M5.5 5.8v12.4L14.5 12z" fill="currentColor"/></svg>',
   pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.4" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.4" fill="currentColor"/></svg>',
   x:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  bin:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5M10 10.5v6M14 10.5v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   gear:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M19.4 13.1a7.7 7.7 0 0 0 0-2.2l2-1.6-2-3.4-2.4 1a7.3 7.3 0 0 0-1.9-1.1L14.8 3.3h-4l-.3 2.5a7.3 7.3 0 0 0-1.9 1.1l-2.4-1-2 3.4 2 1.6a7.7 7.7 0 0 0 0 2.2l-2 1.6 2 3.4 2.4-1a7.3 7.3 0 0 0 1.9 1.1l.3 2.5h4l.3-2.5a7.3 7.3 0 0 0 1.9-1.1l2.4 1 2-3.4zM12.8 15.4a3.4 3.4 0 1 1 0-6.8 3.4 3.4 0 0 1 0 6.8z"/></svg>',
   logo:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 46 L14 18 L24 30 L32 14 L40 30 L50 18 L54 46 Z" fill="none" style="stroke:var(--accent)" stroke-width="5" stroke-linejoin="round"/><path d="M12 54 H52" style="stroke:var(--pink)" stroke-width="5" stroke-linecap="round"/></svg>'
 };
@@ -1565,11 +1580,23 @@ function bestAlt(p,muscle,from){
   pool.forEach(n=>{let s=words(n).filter(w=>fw.includes(w)).length*10;if(/^(Cable|Machine)/.test(from)&&/^RB/.test(n))s+=3;if(p.equip[1]===false&&/\(home\)/.test(n))s+=2;if(/^DB/.test(n))s+=1;if(loaded&&EX[n].e===0)s-=6;if(s>bs){bs=s;best=n;}});
   return best;
 }
-function planWorkouts(p){
-  const P=progOf(p);if(!P)return [];
-  const sw=p.plan.swaps||{};
-  const mk=(w,s,extra)=>Object.assign({},s,{def:s.ex,ex:sw[s.id]||s.ex,wid:w.id},extra||{});
-  const kept=P.workouts.filter(w=>p.plan.active.includes(w.id)).map(w=>Object.assign({},w,{slots:w.slots.map(s=>mk(w,s)),circuit:w.circuit?{name:sw[w.id+'d']||w.circuit.name,def:w.circuit.name}:null}));
+/* Exercises can be added to and taken out of a workout in the Plan tab.
+   Plan changes last for the block, like swaps: p.plan.removed lists the plan's slot ids taken out,
+   p.plan.added holds extra slots per workout ({id, o:'+', m, ex, sets[], reps[]} with one entry per week, like the plan's own).
+   Picking a new programme makes a new p.plan, so both reset with it. */
+const planRemoved=p=>new Set(p.plan.removed||[]);
+const planAdded=(p,wid)=>((p.plan.added||{})[wid]||[]);
+/* opt.edits:false gives the workouts as the plan set them (swaps still apply, added and removed exercises don't),
+   which the XP rule compares against */
+function planWorkouts(p,opt){
+  const P=progOf(p);if(!P)return [];const edits=!(opt&&opt.edits===false);
+  const sw=p.plan.swaps||{};const rm=edits?planRemoved(p):new Set();
+  /* A swap can move a slot to another muscle group: m follows the exercise now in it (so labels and sets per muscle are right),
+     dm keeps the group the plan put there */
+  const mk=(w,s,extra)=>{const ex=sw[s.id]||s.ex;return Object.assign({},s,{def:s.ex,ex,wid:w.id,dm:s.m,m:sw[s.id]&&EX[ex]?EX[ex].m:s.m},extra||{});};
+  const kept=P.workouts.filter(w=>p.plan.active.includes(w.id)).map(w=>Object.assign({},w,{
+    slots:w.slots.filter(s=>!rm.has(s.id)).map(s=>mk(w,s)).concat(edits?planAdded(p,w.id).map(s=>mk(w,s,{added:true})):[]),
+    circuit:w.circuit?{name:sw[w.id+'d']||w.circuit.name,def:w.circuit.name}:null}));
   if(p.plan.carry&&kept.length){
     P.workouts.filter(w=>!p.plan.active.includes(w.id)).forEach(w=>{
       const a=w.slots[0];const has=x=>x.slots.some(s=>s.m===a.m)?1:0;
@@ -1577,7 +1604,7 @@ function planWorkouts(p){
       target.slots.push(mk(w,a,{o:'+',carried:w.name}));
     });
   }
-  if(p.plan.trim)kept.forEach(w=>{w.slots=w.slots.filter((s,i)=>s.carried||(P.fam==='lr'?s.o!=='C':!(s.m!=='Core'&&i>=4)));});
+  if(p.plan.trim)kept.forEach(w=>{w.slots=w.slots.filter((s,i)=>s.carried||s.added||(P.fam==='lr'?s.o!=='C':!(s.dm!=='Core'&&i>=4)));});
   return kept;
 }
 function schedule(p){
@@ -1625,8 +1652,9 @@ function nudge(prev,target){
   return null;
 }
 function autoFix(p){
-  const P=progOf(p);if(!P)return 0;let n=0;
-  P.workouts.forEach(w=>w.slots.forEach(s=>{const cur=p.plan.swaps[s.id]||s.ex;if(blocked(p,cur)){const alt=bestAlt(p,s.m,cur);if(alt){if(alt===s.ex)delete p.plan.swaps[s.id];else p.plan.swaps[s.id]=alt;n++;}}}));
+  const P=progOf(p);if(!P)return 0;let n=0;const rm=planRemoved(p);
+  /* The plan's own exercises that are still in, plus any added ones */
+  P.workouts.forEach(w=>w.slots.filter(s=>!rm.has(s.id)).concat(planAdded(p,w.id)).forEach(s=>{const cur=p.plan.swaps[s.id]||s.ex;if(blocked(p,cur)){const alt=bestAlt(p,p.plan.swaps[s.id]&&EX[cur]?EX[cur].m:s.m,cur);if(alt){if(alt===s.ex)delete p.plan.swaps[s.id];else p.plan.swaps[s.id]=alt;n++;}}}));
   P.workouts.forEach(w=>{if(!w.circuit)return;const k=w.id+'d';const cur=p.plan.swaps[k]||w.circuit.name;if(circBlocked(p,cur)){const alt=bestCircuit(p,cur);if(alt){if(alt===w.circuit.name)delete p.plan.swaps[k];else p.plan.swaps[k]=alt;n++;}}});
   return n;
 }
@@ -1731,6 +1759,8 @@ const ADULT_SRC=[
 const LADDER_ADULT=LADDER.map((l,i)=>Object.assign({},l,{name:ADULT_SRC[i][0],line:ADULT_SRC[i][1]}));
 const adultNames=p=>!!(p&&p.names==='adult');
 const ladderFor=p=>adultNames(p)?LADDER_ADULT:LADDER;
+/* Adult names stay a surprise: a level's name shows only once it's reached (the list locks the rest, "XP to level N" leaves it off) */
+const namesHidden=g=>g.ladder===LADDER_ADULT;
 const WEEK_LEVEL=20;               /* from here a level takes about a week of training */
 const ELITE_FROM=MAX_LEVEL-9;      /* the last ten levels */
 const ladderAt=n=>LADDER[Math.max(1,Math.min(n,MAX_LEVEL))-1];
@@ -1740,7 +1770,7 @@ const xpToNext=g=>g.level>=MAX_LEVEL?0:LADDER[g.level].at-g.xp;
 /* "1,234 XP to level 14" (optionally with the name), or the max-level line */
 function nextLine(g,withName){
   if(g.level>=MAX_LEVEL)return 'Max level. Top of the club.';
-  const nx=(g.ladder||LADDER)[g.level];return `${xpToNext(g).toLocaleString('en-AU')} XP to level ${nx.n}${withName?`, ${esc(nx.name)}`:''}`;
+  const nx=(g.ladder||LADDER)[g.level];return `${xpToNext(g).toLocaleString('en-AU')} XP to level ${nx.n}${withName&&!namesHidden(g)?`, ${esc(nx.name)}`:''}`;
 }
 const hexA=(h,a)=>`rgba(${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)},${a})`;
 /* Exercises held for time (planks, carries) record total seconds rather than reps */
@@ -1777,25 +1807,37 @@ const minRoundMs=name=>Math.max(60,((CIRCUITS[name]||{moves:[]}).moves.length||3
    - every exercise needs at least 3 logged sets, or all of its planned sets when the plan asks for fewer (week 1 of some beginner blocks, the deload)
    - a workout with a circuit also needs 3 XP-earning rounds, and its XP is scaled by rounds done out of the week's target (3 of 5 = 60%)
    - a workout without a circuit is scaled by sets done out of sets planned, with extra sets on one exercise capped at its plan
+   - taking exercises out of the plan doesn't make full XP easier: XP is also scaled by the sets planned now out of the sets the
+     plan asked for (req.orig), so a removed exercise costs its share unless an added one makes it up. Sets above the plan still
+     earn their set XP, but the scale never goes past 100%.
    Miss the minimum and the workout is still saved (sets, records, history) but earns no XP, and doesn't count towards full weeks,
-   cleared blocks, streaks or quest badges. s.req keeps what the workout asked for at the moment it was finished. */
+   cleared blocks, streaks or quest badges. s.req keeps what the workout asked for at the moment it was finished
+   (workouts finished before plan editing have no req.orig and keep the XP they had). */
 const MIN_SETS=3,MIN_ROUNDS=3;
-function workoutReq(p,w){const wi=weeksOf(p).indexOf(p.week);return {slots:w.slots.map(sl=>[sl.id,sl.sets[wi]]),rounds:w.circuit&&progOf(p).fam==='lr'?circuitTarget(p.plan.prog,p.week):0};}
+/* Sets this workout plans in week index wi: as it stands, and as the plan set it before any exercises were added or taken out */
+function planSets(p,w,wi){const W=planWorkouts(p,{edits:false}).find(x=>x.id===w.id);const sum=sl=>sl.reduce((a,s)=>a+(s.sets[wi]||0),0);
+  return {now:sum(w.slots),orig:W?sum(W.slots):sum(w.slots)};}
+const planCover=(p,w,wi)=>{const t=planSets(p,w,wi);return t.orig?Math.min(1,t.now/t.orig):1;};
+function workoutReq(p,w){const wi=weeksOf(p).indexOf(p.week);
+  return {slots:w.slots.map(sl=>[sl.id,sl.sets[wi]]),rounds:w.circuit&&progOf(p).fam==='lr'?circuitTarget(p.plan.prog,p.week):0,orig:planSets(p,w,wi).orig};}
 function ruleCheck(s,req){
   const short=[];let done=0,planned=0;
   req.slots.forEach(([sid,n])=>{const e=s.ex[sid];const d=e?e.sets.filter(x=>x.done).length:0;const need=Math.min(MIN_SETS,n);
     if(d<need)short.push({name:e?e.name:sid,d,need});done+=Math.min(d,n);planned+=n;});
   const rd=req.rounds?xpRounds(s.circuit):0,rNeed=Math.min(MIN_ROUNDS,req.rounds);
   const ok=!short.length&&!(req.rounds&&rd<rNeed);
-  const scale=req.rounds?Math.min(1,rd/req.rounds):planned?Math.min(1,done/planned):1;
-  return {ok,mult:ok?scale:0,scale,short,rd,rNeed,rTarget:req.rounds,done,planned,full3:req.slots.every(([,n])=>n>=MIN_SETS)};
+  const cover=req.orig?Math.min(1,planned/req.orig):1;
+  const scale=(req.rounds?Math.min(1,rd/req.rounds):planned?Math.min(1,done/planned):1)*cover;
+  return {ok,mult:ok?scale:0,scale,cover,orig:req.orig||planned,short,rd,rNeed,rTarget:req.rounds,done,planned,full3:req.slots.every(([,n])=>n>=MIN_SETS)};
 }
 /* Plain-words list of what's still missing, e.g. "Bench press 2 of 3 sets, circuit 1 of 3 rounds" */
 function ruleGaps(rc,limit){const g=rc.short.map(x=>`${x.name} ${x.d} of ${x.need} sets`);if(rc.rTarget&&rc.rd<rc.rNeed)g.push(`circuit ${rc.rd} of ${rc.rNeed} rounds`);
   return limit&&g.length>limit?g.slice(0,limit).join(', ')+` and ${g.length-limit} more`:g.join(', ');}
 /* "3 sets of every exercise", or "every planned set" in a week that plans fewer than 3 */
 const ruleNeed=rc=>`${rc.full3?`${MIN_SETS} sets of every exercise`:'every planned set'}${rc.rTarget?` and ${rc.rNeed} circuit rounds`:''}`;
-const ruleWhy=rc=>rc.rTarget?`${rc.rd} of ${rc.rTarget} circuit rounds`:`${rc.done} of ${rc.planned} sets`;
+/* Why the XP is what it is, e.g. "3 of 5 circuit rounds" or "10 of the plan's 14 sets" when exercises were taken out */
+const ruleWhy=rc=>rc.rTarget?`${rc.rd} of ${rc.rTarget} circuit rounds${rc.cover<1?`, with ${rc.planned} of the plan's ${rc.orig} sets left in`:''}`
+  :rc.cover<1?`${rc.done} of the plan's ${rc.orig} sets`:`${rc.done} of ${rc.planned} sets`;
 function circuitTarget(prog,week){const P=PROGS[prog];if(!P||!P.rounds)return 0;const i=Math.max(0,P.weeks.indexOf(week));return +String(P.rounds[i]||P.rounds[0]).split('-').pop();}
 const liftGoalsMet=p=>p.goals.lifts.filter(g=>g.target!=null&&(g.type==='reps'?bestReps(p,g.ex,g.atKg)>=g.target:bestTop(p,g.ex)>=g.target));
 function game(p,skip){
@@ -1910,7 +1952,7 @@ function playerCard(p,g){
   <div class="pc-meta"><span>${g.xp.toLocaleString('en-AU')} XP · ${g.level>=MAX_LEVEL?'max level':`${xpToNext(g).toLocaleString('en-AU')} to level ${g.level+1}`}</span>${streakHTML(g)}</div></div></section>`;
 }
 /* Rough XP for a workout before it is done: sets, the finish bonus and a full circuit */
-function questXP(p,w,wi){const sets=w.slots.reduce((a,sl)=>a+sl.sets[wi],0);let x=sets*XP.set+XP.finish;if(w.circuit){const t=circuitTarget(p.plan.prog,p.week);x+=t*XP.round+XP.boss;}return x;}
+function questXP(p,w,wi){const sets=w.slots.reduce((a,sl)=>a+sl.sets[wi],0);let x=sets*XP.set+XP.finish;if(w.circuit){const t=circuitTarget(p.plan.prog,p.week);x+=t*XP.round+XP.boss;}return Math.round(x*planCover(p,w,wi));}
 
 /* XP a workout in progress would earn if finished now (the finish bonus shows separately) */
 function liveXP(p,key,s){
@@ -2219,7 +2261,7 @@ function exCard(p,s,key,sl,wi){
   else if(guide)tags.push(`<span class="tag blue">Guide ${kgS(guide)} kg</span>`);
   const noteOpen=ui.noteOpen[sl.id]||e.note;
   return `<article class="ex${bl?' blocked':''}" id="ex-${sl.id}"><div class="ex-head"><span class="order">${esc(sl.o)}</span>
-    <div class="ex-t"><h3>${esc(e.name)}</h3><span class="ex-sub">${esc(sl.m)} · ${e.sets.length} sets · ${dash(target)}${time?'':' reps'}${fail?' · last set to failure':''}${sl.carried?' · moved from '+esc(sl.carried):''}</span>${tags.length?`<div class="ex-tags">${tags.join('')}</div>`:''}</div>
+    <div class="ex-t"><h3>${esc(e.name)}</h3><span class="ex-sub">${esc(sl.m)} · ${e.sets.length} sets · ${dash(target)}${time?'':' reps'}${fail?' · last set to failure':''}${sl.carried?' · moved from '+esc(sl.carried):''}${sl.added?' · added':''}</span>${tags.length?`<div class="ex-tags">${tags.join('')}</div>`:''}</div>
     <div class="ex-acts"><a class="icon-btn vid" href="${vidUrl(e.name)}" target="_blank" rel="noopener" aria-label="Watch ${esc(e.name)} demo">${IC.play}Demo</a>
     <button type="button" class="icon-btn" data-act="swap" data-sid="${sl.id}" aria-label="Swap ${esc(e.name)}">${IC.swap}Swap</button></div></div>
     ${lastNoteHTML(p,s,key,sl,e)}<div class="sets"><div class="set-h"><span>Set</span><span>Last time</span><span>kg</span><span>${time?'Secs':'Reps'}</span><span></span></div>${rows}</div>
@@ -2273,7 +2315,9 @@ function workoutHTML(){
     <li>Keep most sets one or two reps short of failure. FAIL on a last set means keep going until you can't do another clean rep.</li></ul>
     <div class="glossary"><b>BB</b><span>Barbell</span><b>DB</b><span>Dumbbell</span><b>KB</b><span>Kettlebell</span><b>RB</b><span>Resistance band</span><b>RDL</b><span>Romanian deadlift</span><b>BW</b><span>Bodyweight, no added weight</span><b>Est. 1RM</b><span>Estimated heaviest single rep</span></div></details>`;
   {const rc=liveRule(p,s);if(rc){const pct=Math.round(rc.scale*100);
-    h+=rc.ok?`<div class="xp-rule ok"><b>XP unlocked · ${pct}%</b><span>${rc.rTarget?`${rc.rd} of ${rc.rTarget} circuit rounds${pct<100?`. Each extra round adds ${Math.round(100/rc.rTarget)}%.`:'. Full XP.'}`:`${rc.done} of ${rc.planned} sets${pct<100?'. Every extra set adds a little more.':'. Full XP.'}`}</span></div>`
+    /* With exercises taken out, the cap explains why it can't reach 100% */
+    const capped=rc.cover<1?` Exercises taken out of the plan cap it at ${Math.round(rc.cover*100)}%.`:'';const top=pct>=Math.round(rc.cover*100);
+    h+=rc.ok?`<div class="xp-rule ok"><b>XP unlocked · ${pct}%</b><span>${rc.rTarget?`${rc.rd} of ${rc.rTarget} circuit rounds${!top?`. Each extra round adds ${Math.round(100*rc.cover/rc.rTarget)}%.`:pct>=100?'. Full XP.':'.'}`:`${rc.done} of ${rc.planned} sets${!top?'. Every extra set adds a little more.':pct>=100?'. Full XP.':'.'}`}${capped}</span></div>`
       :`<div class="xp-rule"><b>No XP yet</b><span>Needs ${ruleNeed(rc)}. Still to do: ${esc(ruleGaps(rc,3))}.</span></div>`;}}
   h+=`<button type="button" class="btn block wo-finish" data-act="finish">${s.done?'Save changes':'Finish workout'}</button>
     <div class="wo-foot"><div id="stbar">${setTimerHTML()}</div></div>`;
@@ -2316,13 +2360,14 @@ function planView(){
   <div class="legend"><span><i style="background:var(--p-blue)"></i>Your plan</span><span><i style="background:var(--line)"></i>Full option</span></div>
   <div class="vol">${VOL_M.filter(m=>now[m]||def[m]).map(m=>`<div class="vrow"><span class="vn">${m}</span><span class="vtrack"><span class="ghost" style="width:${def[m]/mx*100}%"></span><span class="fill${now[m]<def[m]?' low':''}" style="width:${now[m]/mx*100}%"></span></span><span class="vv">${now[m]}<small> / ${def[m]}</small></span></div>`).join('')}</div>
   ${VOL_M.some(m=>now[m]<def[m])?'<p class="hint">Orange bars are below the full option for that muscle this week.</p>':''}</section>`;
-  const swapped=Object.keys(p.plan.swaps).length;
-  h+=`<section class="card"><div class="sec-h"><h2>${P.fam==='lr'?'Exercises and circuits':'Exercises'}</h2>${swapped?`<button type="button" class="link" data-act="resetswaps">Reset ${swapped} swap${swapped>1?'s':''}</button>`:'<span class="sec-note">Swaps last for the whole block</span>'}</div>
+  const changes=planChanges(p);
+  h+=`<section class="card" id="plan-ex"><div class="sec-h"><h2>${P.fam==='lr'?'Exercises and circuits':'Exercises'}</h2>${changes?`<button type="button" class="link" data-act="resetswaps">Reset ${changes} change${changes>1?'s':''}</button>`:'<span class="sec-note">Changes last for the whole block</span>'}</div>
   ${ws.map(w=>`<div class="pw"><div class="pw-h"><span class="plate sm pl-${plateOf(w.id)}"></span>${esc(w.name)} · ${dayOf(p,w.id)}</div>
-    ${w.slots.map(sl=>{const bl=blocked(p,sl.ex);return `<div class="slot"><span class="order">${esc(sl.o)}</span><span class="st"><b>${esc(sl.ex)}</b><small${bl?' class="bad"':''}>${bl?esc(bl):esc(sl.m)+' · '+dash(sl.reps[wi])}${sl.ex!==sl.def?' · was '+esc(sl.def):''}${sl.carried?' · from '+esc(sl.carried):''}</small></span>
-      <a class="icon-btn vid" href="${vidUrl(sl.ex)}" target="_blank" rel="noopener" aria-label="Watch ${esc(sl.ex)} demo">${IC.play}</a><button type="button" class="icon-btn" data-act="swap" data-sid="${sl.id}" aria-label="Swap ${esc(sl.ex)}">${IC.swap}</button></div>`;}).join('')}
+    ${w.slots.map(sl=>{const bl=blocked(p,sl.ex);return `<div class="slot"><span class="order">${esc(sl.o)}</span><span class="st"><b>${esc(sl.ex)}</b><small${bl?' class="bad"':''}>${bl?esc(bl):`${esc(sl.m)} · ${sl.sets[wi]} × ${dash(sl.reps[wi])}`}${sl.ex!==sl.def?' · was '+esc(sl.def):''}${sl.carried?' · from '+esc(sl.carried):''}${sl.added?' · added':''}</small></span>
+      <a class="icon-btn vid" href="${vidUrl(sl.ex)}" target="_blank" rel="noopener" aria-label="Watch ${esc(sl.ex)} demo">${IC.play}</a><button type="button" class="icon-btn" data-act="swap" data-sid="${sl.id}" aria-label="Swap ${esc(sl.ex)}">${IC.swap}</button>${!sl.carried?`<button type="button" class="icon-btn" data-act="rmex" data-sid="${sl.id}" data-wid="${w.id}" aria-label="Remove ${esc(sl.ex)}"${w.slots.length<2?' disabled':''}>${IC.bin}</button>`:''}</div>`;}).join('')}
+    ${removedRows(p,w)}${coverNote(p,w,wi)}<button type="button" class="btn ghost sm add-ex" data-act="addex" data-wid="${w.id}">${IC.plus}Add exercise</button>
     ${w.circuit?`<div class="slot"><span class="order">D</span><span class="st"><b>${esc(w.circuit.name)}</b>${circBlocked(p,w.circuit.name)?`<small class="bad">${esc(circBlocked(p,w.circuit.name))}</small>`:`<small>${esc(CIRCUITS[w.circuit.name].focus)} · ${esc(CIRCUITS[w.circuit.name].moves.join(' · '))}${w.circuit.name!==w.circuit.def?' · was '+esc(w.circuit.def):''}</small>`}</span>${(CIRCUITS[w.circuit.name]||{}).v?`<a class="icon-btn vid" href="${yt(CIRCUITS[w.circuit.name].v)}" target="_blank" rel="noopener" aria-label="Watch circuit">${IC.play}</a>`:''}<button type="button" class="icon-btn" data-act="cswap" data-wid="${w.id}" aria-label="Swap circuit">${IC.swap}</button></div>`:''}</div>`).join('')}
-  <p class="hint">Play buttons open a demo video, and each circuit has a follow-along video. Moves without a linked demo, like machines and TRX, open a YouTube search. Tap the swap button on any exercise or circuit to change it for the whole block.</p></section>`;
+  <p class="hint">Play buttons open a demo video, and each circuit has a follow-along video. Moves without a linked demo, like machines and TRX, open a YouTube search. Swap to change an exercise or circuit, the bin to take one out, or Add exercise to put one in. Changes last for the whole block.</p></section>`;
   return h+settingsLink();
 }
 const settingsLink=()=>`<button type="button" class="btn ghost block set-link" data-act="settings">${IC.gear}Settings</button>`;
@@ -2448,10 +2493,10 @@ function progressView(){
 /* Every level on one list, grouped by tier, so the names are there to chase */
 function ladderHTML(g){
   return `<details class="how ladder"><summary>All ${MAX_LEVEL} levels</summary>
-  <p class="hint">Levels 1 to ${WEEK_LEVEL-1} come thick and fast. Level ${WEEK_LEVEL} takes about a week of training on a 4-day plan, and each of the last ten takes a little longer than the one before. Level ${MAX_LEVEL} is roughly a full block on its own.</p>
+  <p class="hint">Levels 1 to ${WEEK_LEVEL-1} come thick and fast. Level ${WEEK_LEVEL} takes about a week of training on a 4-day plan, and each of the last ten takes a little longer than the one before. Level ${MAX_LEVEL} is roughly a full block on its own.${namesHidden(g)?' Adult names stay hidden until you reach them.':''}</p>
   ${TIERS.map((t,ti)=>`<div class="lt"><span class="lt-h" style="color:${t.c}">${t.name} tier${ti*5+1>=ELITE_FROM?' · elite':''}</span>
-    ${g.ladder.slice(ti*5,ti*5+5).map(l=>{const st=l.n<g.level?'done':l.n===g.level?'cur':'';
-      return `<div class="lrow${st?' '+st:''}"${st==='cur'?' aria-current="step"':''}><span class="ln"${st?` style="color:${t.c}"`:''}>${l.n}</span><span class="lname">${esc(l.name)}${st==='cur'?'<small>You are here</small>':''}</span><span class="lxp">${l.at.toLocaleString('en-AU')}<small>${l.n===1?'start':'+'+l.cost.toLocaleString('en-AU')}</small></span></div>`;}).join('')}</div>`).join('')}
+    ${g.ladder.slice(ti*5,ti*5+5).map(l=>{const st=l.n<g.level?'done':l.n===g.level?'cur':'';const locked=!st&&namesHidden(g);
+      return `<div class="lrow${st?' '+st:''}${locked?' locked':''}"${st==='cur'?' aria-current="step"':''}><span class="ln"${st?` style="color:${t.c}"`:''}>${l.n}</span><span class="lname">${locked?'Hidden until you get there':esc(l.name)}${st==='cur'?'<small>You are here</small>':''}</span><span class="lxp">${l.at.toLocaleString('en-AU')}<small>${l.n===1?'start':'+'+l.cost.toLocaleString('en-AU')}</small></span></div>`;}).join('')}</div>`).join('')}
   </details>`;
 }
 function levelCard(p,g){
@@ -3164,17 +3209,101 @@ function questComplete(p,w,key,before,after,changes){
   celebrateLevels(p,1000);
 }
 function findSlot(p,sid){return planWorkouts(p).flatMap(w=>w.slots).find(x=>x.id===sid);}
+/* Swap an exercise for the whole block. Browse by muscle group (the plan's group first, then upper body, lower body, core, cardio),
+   or type to search every exercise. Picking another group moves the slot's sets to that group, which the Plan tab's
+   "Sets per muscle" then shows. ui.swapM is the group being browsed. */
+const SWAP_ORDER=['Chest','Back','Shoulders','Biceps','Triceps','Forearms','Quads','Glutes','Hamstrings','Calves','Core','Cardio'];
+const SWAP_GROUPS=SWAP_ORDER.filter(m=>BY_M[m]).concat(Object.keys(BY_M).filter(m=>!SWAP_ORDER.includes(m)));
+const exGroup=(n,sl)=>n===sl.def?sl.dm:((EX[n]||{}).m||sl.dm);
 function openSwap(sid){
-  const p=prof();const sl=findSlot(p,sid);if(!sl)return;ui.swapSid=sid;ui.swapQ='';
-  sheet(`<h3>Swap ${esc(sl.ex)}</h3><p class="hint">Applies to the whole block. Showing ${esc(sl.m.toLowerCase())} exercises from the exercise library. Flagged ones need equipment or a movement you've switched off.</p>
-  <input type="search" class="field" id="swap-q" placeholder="Search every exercise" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Search exercises"><div class="opts" id="swap-list">${swapList(p,sl,'')}</div>`);
+  const p=prof();const sl=findSlot(p,sid);if(!sl)return;ui.swapSid=sid;ui.swapQ='';ui.swapM=sl.m;
+  sheet(`<h3>Swap ${esc(sl.ex)}</h3><p class="hint">Applies to the whole block. Pick a muscle group, or search every exercise. Flagged ones need equipment or a movement you've switched off.</p>
+  <div class="circ-tools"><div class="chips" role="group" aria-label="Muscle group" id="swap-groups">${swapChips(sl,false)}</div>
+  <input type="search" class="field" id="swap-q" placeholder="Search every exercise" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Search exercises"></div>
+  <p class="hint swap-bal" id="swap-bal" aria-live="polite">${swapBalance(sl,false)}</p><div class="opts" id="swap-list">${swapList(p,sl,'')}</div>`);
+}
+/* The plan's group first; while searching, no chip is selected because the search covers every group */
+function swapChips(sl,searching){
+  const order=[sl.dm].concat(SWAP_GROUPS.filter(m=>m!==sl.dm));
+  return order.map(m=>{const on=!searching&&m===ui.swapM;return `<button type="button" class="chip${on?' on':''}" data-act="swapm" data-m="${esc(m)}" aria-pressed="${on}">${esc(m)}</button>`;}).join('');
+}
+/* Browsing another group: say what changes, in plain words */
+function swapBalance(sl,searching){
+  if(searching||ui.swapM===sl.dm)return '';
+  return `This slot is planned for ${esc(sl.dm.toLowerCase())}. A ${esc(ui.swapM.toLowerCase())} exercise here moves its sets to ${esc(ui.swapM.toLowerCase())}. Sets per muscle on the Plan tab shows the balance.`;
 }
 function swapList(p,sl,q){
   const ql=q.trim().toLowerCase();
-  let list=ql?Object.keys(EX).filter(n=>n.toLowerCase().includes(ql)).sort():(BY_M[sl.m]||[]).slice();
+  let list=ql?Object.keys(EX).filter(n=>n.toLowerCase().includes(ql)).sort():(BY_M[ui.swapM]||[]).slice();
   list=list.filter(n=>n!==sl.def);list.sort((x,y)=>(blocked(p,x)?1:0)-(blocked(p,y)?1:0));
   const opts=[sl.def].concat(list);
-  return opts.map(n=>{const bl=blocked(p,n);return `<button type="button" class="opt${n===sl.ex?' cur':''}${bl?' dim':''}" data-act="pickswap" data-name="${esc(n)}"><span>${esc(n)}</span><small class="${bl?'bad':''}">${bl?esc(bl):n===sl.def?'Default':n===sl.ex?'Current':''}</small></button>`;}).join('')||'<p class="hint">No matches.</p>';
+  /* Each option names its group when it isn't the group on show: every search result, and the default while browsing elsewhere */
+  return opts.map(n=>{const bl=blocked(p,n);const g=exGroup(n,sl);
+    const tag=[n===sl.def?'Default':n===sl.ex?'Current':'',ql||g!==ui.swapM?g:''].filter(Boolean).join(' · ');
+    return `<button type="button" class="opt${n===sl.ex?' cur':''}${bl?' dim':''}" data-act="pickswap" data-name="${esc(n)}"><span>${esc(n)}</span><small class="${bl?'bad':''}">${bl?esc(bl):esc(tag)}</small></button>`;}).join('')||'<p class="hint">No matches.</p>';
+}
+/* ----- Adding and removing exercises (Plan tab) ----- */
+/* Under a workout with exercises taken out and not made up: what it does to the XP */
+function coverNote(p,w,wi){const t=planSets(p,w,wi);if(!t.orig||t.now>=t.orig)return '';
+  return `<p class="hint cover-note">${t.now} of the plan's ${t.orig} sets this week, so XP for this workout is capped at ${Math.round(t.now/t.orig*100)}%. Add an exercise to make it up.</p>`;}
+const planChanges=p=>Object.keys(p.plan.swaps||{}).length+(p.plan.removed||[]).length+Object.values(p.plan.added||{}).reduce((a,l)=>a+l.length,0);
+/* The plan's exercises taken out of this workout, dimmed, each with Restore. Carried-over exercises follow the carry setting instead. */
+function removedRows(p,w){
+  const rm=planRemoved(p);const W=progOf(p).workouts.find(x=>x.id===w.id);
+  return (W?W.slots:[]).filter(s=>rm.has(s.id)).map(s=>`<div class="slot removed"><span class="order">${esc(s.o)}</span><span class="st"><b>${esc(p.plan.swaps[s.id]||s.ex)}</b><small>Taken out for this block</small></span><button type="button" class="icon-btn" data-act="restoreex" data-sid="${s.id}">Restore</button></div>`).join('');
+}
+/* Snapshot and restore of the plan changes, for Undo */
+const planSnap=p=>JSON.stringify({s:p.plan.swaps||{},r:p.plan.removed||null,a:p.plan.added||null});
+const planRestore=(p,snap)=>{const b=JSON.parse(snap);p.plan.swaps=b.s;if(b.r)p.plan.removed=b.r;else delete p.plan.removed;if(b.a)p.plan.added=b.a;else delete p.plan.added;};
+function removeExercise(p,wid,sid){
+  const w=planWorkouts(p).find(x=>x.id===wid);const sl=w&&w.slots.find(s=>s.id===sid);if(!sl)return;
+  if(w.slots.length<2){toast('A workout needs at least one exercise');return;}
+  const snap=planSnap(p);
+  if(sl.added){const left=planAdded(p,wid).filter(s=>s.id!==sid);p.plan.added=Object.assign({},p.plan.added);if(left.length)p.plan.added[wid]=left;else delete p.plan.added[wid];
+    if(!Object.keys(p.plan.added).length)delete p.plan.added;delete p.plan.swaps[sid];}
+  else p.plan.removed=(p.plan.removed||[]).concat(sid);
+  /* Anything already logged on it today stays in the workout's record and still counts */
+  const s=p.sessions[sk(p,p.week,wid)];const logged=!!(s&&!s.done&&s.ex[sid]&&s.ex[sid].sets.some(x=>x.done));
+  save();render();toast(`${sl.ex} taken out of ${w.name}${logged?'. Sets logged today stay saved':''}`,()=>planRestore(p,snap));
+}
+const ADD_REPS=['5-8','8-12','10-15','12-15','30-45s'];
+/* ui.add: the workout being added to, the group on show, and the sets and reps the new exercise will get */
+function addSheet(wid){
+  const p=prof();const w=planWorkouts(p).find(x=>x.id===wid);if(!w)return;const wi=Math.max(0,weeksOf(p).indexOf(p.week));const last=w.slots[w.slots.length-1];
+  ui.add={wid,m:last?last.m:SWAP_GROUPS[0],sets:last?last.sets[wi]:3,reps:last?String(last.reps[wi]):'8-12'};
+  sheet(`<h3>Add to ${esc(w.name)}</h3><p class="hint">For the whole block, after the other exercises${w.circuit?' and before the circuit':''}. Sets and reps start the same as the last exercise.</p>
+  <div class="add-cfg" id="add-cfg">${addCfgHTML()}</div>
+  <div class="circ-tools"><div class="chips" role="group" aria-label="Muscle group" id="add-groups">${addChips(false)}</div>
+  <input type="search" class="field" id="add-q" placeholder="Search every exercise" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Search exercises"></div>
+  <div class="opts" id="add-list">${addList(p,w,'')}</div>`);
+}
+function addCfgHTML(){const A=ui.add;const reps=[A.reps].concat(ADD_REPS.filter(r=>r!==A.reps));
+  return `<div class="add-row"><span class="add-k">Sets</span><div class="sl-row add-step"><button type="button" class="sl-b" data-act="add-sets" data-d="-1" aria-label="Fewer sets"${A.sets<=1?' disabled':''}>−</button><b aria-live="polite">${A.sets}</b><button type="button" class="sl-b" data-act="add-sets" data-d="1" aria-label="More sets"${A.sets>=6?' disabled':''}>+</button></div></div>
+  <div class="add-row"><span class="add-k">${isTime(A.reps)?'Time':'Reps'}</span><div class="chips">${reps.map(r=>`<button type="button" class="chip${r===A.reps?' on':''}" data-act="add-reps" data-r="${esc(r)}" aria-pressed="${r===A.reps}">${esc(dash(r))}</button>`).join('')}</div></div>`;}
+function addChips(searching){return SWAP_GROUPS.map(m=>{const on=!searching&&m===ui.add.m;return `<button type="button" class="chip${on?' on':''}" data-act="addm" data-m="${esc(m)}" aria-pressed="${on}">${esc(m)}</button>`;}).join('');}
+/* Exercises already in this workout are left out, flagged ones go last */
+function addList(p,w,q){
+  const ql=q.trim().toLowerCase();const have=new Set(w.slots.map(s=>s.ex));
+  const list=(ql?Object.keys(EX).filter(n=>n.toLowerCase().includes(ql)).sort():(BY_M[ui.add.m]||[]).slice()).filter(n=>!have.has(n)).sort((x,y)=>(blocked(p,x)?1:0)-(blocked(p,y)?1:0));
+  return list.map(n=>{const bl=blocked(p,n);return `<button type="button" class="opt${bl?' dim':''}" data-act="addpick" data-name="${esc(n)}"><span>${esc(n)}</span><small class="${bl?'bad':''}">${bl?esc(bl):ql?esc(EX[n].m):''}</small></button>`;}).join('')||'<p class="hint">No matches.</p>';
+}
+function addRefresh(){
+  const p=prof();const w=ui.add&&planWorkouts(p).find(x=>x.id===ui.add.wid);if(!w)return;const q=($('#add-q')||{}).value||'';
+  const c=$('#add-cfg');if(c)c.innerHTML=addCfgHTML();const g=$('#add-groups');if(g)g.innerHTML=addChips(!!q.trim());const l=$('#add-list');if(l)l.innerHTML=addList(p,w,q);
+}
+function addExercise(p,name){
+  const A=ui.add;const w=A&&planWorkouts(p).find(x=>x.id===A.wid);if(!w||!EX[name])return;
+  const n=weeksOf(p).length;const id=A.wid+'n'+Date.now().toString(36);const snap=planSnap(p);
+  const slot={id,o:'+',m:EX[name].m,ex:name,sets:Array(n).fill(A.sets),reps:Array(n).fill(A.reps)};
+  p.plan.added=Object.assign({},p.plan.added,{[A.wid]:planAdded(p,A.wid).concat(slot)});
+  save();sheet('');render();toast(`Added ${name} to ${w.name}: ${A.sets} × ${dash(A.reps)}`,()=>planRestore(p,snap));
+}
+/* Redraw the chips, the balance note and the list together (after a chip tap or a search keystroke) */
+function swapRefresh(){
+  const p=prof();const sl=findSlot(p,ui.swapSid);if(!sl)return;const q=($('#swap-q')||{}).value||'';const searching=!!q.trim();
+  const g=$('#swap-groups');if(g)g.innerHTML=swapChips(sl,searching);
+  const b=$('#swap-bal');if(b)b.innerHTML=swapBalance(sl,searching);
+  const l=$('#swap-list');if(l)l.innerHTML=swapList(p,sl,q);
 }
 function openCircuitSwap(wid){
   const p=prof();const w=planWorkouts(p).find(x=>x.id===wid);if(!w||!w.circuit)return;ui.swapSid=wid+'d';
@@ -3242,10 +3371,19 @@ document.addEventListener('click',ev=>{
     case 'undo':{const fn=ui.undo;ui.undo=null;$('#toast').hidden=true;if(fn){fn();save();render();toast('Restored');}break;}
     case 'swap':openSwap(a.dataset.sid);break;
     case 'cswap':openCircuitSwap(a.dataset.wid);break;
-    case 'pickswap':{const sl=findSlot(p,ui.swapSid);if(!sl)break;const n=a.dataset.name;const key=sl.carried?sl.id:sl.id;if(n===sl.def)delete p.plan.swaps[key];else p.plan.swaps[key]=n;save();sheet('');if(ui.mode==='workout')renderOverlay();render();toast(n===sl.def?'Back to the default':'Swapped to '+n+' for this block');break;}
+    case 'swapm':{ui.swapM=a.dataset.m;const q=$('#swap-q');if(q)q.value='';swapRefresh();break;}
+    case 'pickswap':{const sl=findSlot(p,ui.swapSid);if(!sl)break;const n=a.dataset.name;const g=exGroup(n,sl);if(n===sl.def)delete p.plan.swaps[sl.id];else p.plan.swaps[sl.id]=n;save();sheet('');if(ui.mode==='workout')renderOverlay();render();toast(n===sl.def?'Back to the default':`Swapped to ${n}${g!==sl.dm?` (${g})`:''} for this block`);break;}
     case 'pickcirc':{const wid=ui.swapSid.slice(0,-1);const P=progOf(p);const def=P.workouts.find(w=>w.id===wid).circuit.name;const n=a.dataset.name;if(n===def)delete p.plan.swaps[ui.swapSid];else p.plan.swaps[ui.swapSid]=n;save();sheet('');if(ui.mode==='workout')renderOverlay();render();toast(n===def?'Back to the default circuit':'Swapped to '+n+' for this block');break;}
     case 'closesheet':sheet('');break;
-    case 'resetswaps':p.plan.swaps={};save();render();toast('Swaps reset to the defaults');break;
+    case 'resetswaps':{const snap=planSnap(p);p.plan.swaps={};delete p.plan.removed;delete p.plan.added;save();render();
+      toast('Workouts reset to the plan',()=>planRestore(p,snap));break;}
+    case 'rmex':removeExercise(p,a.dataset.wid,a.dataset.sid);break;
+    case 'restoreex':{p.plan.removed=(p.plan.removed||[]).filter(id=>id!==a.dataset.sid);if(!p.plan.removed.length)delete p.plan.removed;save();render();toast('Put back in the plan');break;}
+    case 'addex':addSheet(a.dataset.wid);break;
+    case 'addm':ui.add.m=a.dataset.m;{const q=$('#add-q');if(q)q.value='';}addRefresh();break;
+    case 'add-sets':ui.add.sets=Math.min(6,Math.max(1,ui.add.sets+(+a.dataset.d)));addRefresh();break;
+    case 'add-reps':ui.add.reps=a.dataset.r;addRefresh();break;
+    case 'addpick':addExercise(p,a.dataset.name);break;
     case 'pfam':ui.planFam=a.dataset.f;render();break;
     case 'plevel':ui.planLevel=a.dataset.l;render();break;
     case 'circf':{ui.circF=a.dataset.f;const w=planWorkouts(p).find(x=>x.id===ui.swapSid.slice(0,-1));if(w){$('#circ-list').innerHTML=circList(p,w,($('#circ-q')||{}).value||'');document.querySelectorAll('[data-act="circf"]').forEach(b=>{const on=b.dataset.f===ui.circF;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});}break;}
@@ -3326,7 +3464,8 @@ document.addEventListener('click',ev=>{
 document.addEventListener('input',ev=>{
   const t=ev.target;
   if(t.dataset&&t.dataset.tk){setTimerValue(t.dataset.tk,+t.value);return;}
-  if(t.id==='swap-q'){const p=prof();const sl=findSlot(p,ui.swapSid);if(sl)$('#swap-list').innerHTML=swapList(p,sl,t.value);return;}
+  if(t.id==='swap-q'){swapRefresh();return;}
+  if(t.id==='add-q'){addRefresh();return;}
   if(t.id==='circ-q'){const p=prof();const w=planWorkouts(p).find(x=>x.id===ui.swapSid.slice(0,-1));if(w)$('#circ-list').innerHTML=circList(p,w,t.value);return;}
   if(t.id==='su-text'||t.id==='su-sport'){ui.setup.a[t.dataset.k]=t.value;return;}
   if(t.dataset&&t.dataset.note&&ui.open){const {s}=curSession();s.ex[t.dataset.note].note=t.value;save();return;}
@@ -3368,8 +3507,7 @@ document.addEventListener('keydown',ev=>{
 
 render();
 celebrateLevels(prof(),0);
-{const r=state.resume,p=prof();if(r&&p&&p.plan&&Date.now()-r.t<4*3600e3&&planWorkouts(p).some(w=>w.id===r.wid))openWorkout(r.wid);else if(r){delete state.resume;save();}}
-})();
+{const r=state.resume,p=prof();if(r&&p&&p.plan&&Date.now()-r.t<4*3600e3&&planWorkouts(p).some(w=>w.id===r.wid))openWorkout(r.wid);else if(r){delete state.resume;save();}}})();
 </script>
 
 <!-- Offline support: keeps a copy of the app so it opens in a gym with no signal -->
