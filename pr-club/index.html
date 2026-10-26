@@ -446,6 +446,46 @@ table.tbl{border-collapse:collapse;font-size:13px;min-width:100%;font-variant-nu
 @keyframes hexPulse{0%,100%{transform:none}50%{transform:scale(1.07)}}
 @keyframes raysIn{from{opacity:0}to{opacity:1}}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* Boss slain. Timeline: the boss drops in on its last sliver of HP (0 to 0.5 s), takes the hit at 0.6 s (white flash, shake,
+   HP to zero, a slash cuts it corner to corner), the two halves fall away from 0.78 s, then the gold crown takes its place at 1.35 s
+   and the words stamp in. The whole boss is swapped for its two clipped halves at the cut, so there's no seam before it. */
+.fx.boss{background:rgba(12,3,16,.97)}
+.fx.boss::before{content:"";position:absolute;inset:0;z-index:2;background:#fff;pointer-events:none;animation:bossImpact .5s .6s ease-out both}
+.fx.boss .fx-card{animation:bossShake .45s .62s both}
+.boss-stage{display:flex;flex-direction:column;align-items:center;gap:10px}
+.boss-hp{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.16em;color:var(--p-red)}
+.boss-hp b{display:block;width:150px;height:10px;border-radius:999px;background:rgba(255,77,109,.16);box-shadow:inset 0 0 0 1px rgba(255,77,109,.5);overflow:hidden}
+.boss-hp i{display:block;height:100%;width:var(--hp,20%);background:var(--p-red);box-shadow:0 0 10px var(--p-red);animation:bossHp .3s .6s ease-in both}
+.boss-body{position:relative;width:132px;height:132px}
+.boss-body .fx-rays{top:50%}
+.fx.boss .fx-rays i{animation:raysIn .6s 1.35s both,spin 14s linear infinite}
+.boss-whole,.boss-half{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 16px rgba(255,77,109,.55))}
+.boss-whole{animation:bossIn .5s cubic-bezier(.2,.9,.3,1.35) both,bossHit .2s .58s both,bossGone .01s .78s forwards}
+.boss-half{visibility:hidden}
+.boss-half.a{clip-path:polygon(0 0,100% 0,0 100%);animation:bossFallA 1.1s .78s cubic-bezier(.4,0,.9,.6) forwards}
+.boss-half.b{clip-path:polygon(100% 0,100% 100%,0 100%);animation:bossFallB 1.1s .78s cubic-bezier(.4,0,.9,.6) forwards}
+.boss-cut{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(-45deg)}
+.boss-cut i{position:absolute;left:-100px;top:-2px;width:200px;height:4px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff 15%,#fff 85%,transparent);box-shadow:0 0 12px #fff,0 0 28px var(--p-red);transform-origin:0 50%;animation:bossSlash .28s .58s ease-out both}
+.boss-shards{position:absolute;left:50%;top:50%;width:0;height:0}
+.boss-shards i{position:absolute;left:-4px;top:-6px;width:8px;height:12px;background:var(--c,#FF4D6D);clip-path:polygon(50% 0,100% 100%,0 100%);opacity:0;animation:bossShard .8s .62s cubic-bezier(.1,.7,.3,1) forwards}
+.boss-crown{position:absolute;inset:8px;width:116px;height:116px;filter:drop-shadow(0 0 22px rgba(255,212,71,.6));animation:crownIn .7s 1.35s cubic-bezier(.2,.9,.3,1.35) both,hexPulse 1.6s 2.2s ease-in-out infinite}
+.fx.boss .fx-k{font-size:clamp(38px,12vw,50px);white-space:nowrap;text-shadow:0 0 14px rgba(255,77,109,.95),0 0 36px rgba(255,77,109,.55);animation:bossStamp .5s 1s cubic-bezier(.2,.9,.3,1.3) both}
+.fx.boss .fx-type{background:var(--p-red);animation:pop .4s 1.25s both}
+.fx.boss .fx-ex{animation:xpUp .45s 1.35s both}
+.fx.boss .fx-xp{animation:xpUp .5s 1.5s both}
+.fx.boss .fx-was{animation:xpUp .5s 1.6s both}
+.fx.boss .fx-tap{animation:xpUp .4s 1.3s both}
+@keyframes bossImpact{0%{opacity:0}15%{opacity:.45}100%{opacity:0}}
+@keyframes bossShake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+@keyframes bossHp{to{width:0}}
+@keyframes bossIn{0%{transform:translateY(-30px) scale(.4);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:none;opacity:1}}
+@keyframes bossHit{50%{filter:brightness(2.6) drop-shadow(0 0 24px #fff)}}
+@keyframes bossGone{to{visibility:hidden}}
+@keyframes bossFallA{0%{visibility:visible;transform:none;opacity:1}25%{visibility:visible;transform:translate(-9px,-9px) rotate(-5deg);opacity:1}100%{visibility:visible;transform:translate(-40px,110px) rotate(-30deg);opacity:0}}
+@keyframes bossFallB{0%{visibility:visible;transform:none;opacity:1}25%{visibility:visible;transform:translate(9px,9px) rotate(5deg);opacity:1}100%{visibility:visible;transform:translate(40px,130px) rotate(26deg);opacity:0}}
+@keyframes bossSlash{0%{transform:scaleX(0);opacity:1}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes bossShard{0%{transform:rotate(var(--a)) translateY(0) scale(1);opacity:1}100%{transform:rotate(var(--a)) translateY(-110px) rotate(200deg) scale(.4);opacity:0}}
+@keyframes bossStamp{0%{transform:scale(2.6);opacity:0}55%{transform:scale(.92);opacity:1}100%{transform:none;opacity:1}}
 /* Phone polish from the usability audit */
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior-y:none}
@@ -565,6 +605,11 @@ body.kb-open .toast{bottom:calc(var(--kb,0px) + 12px)}
 button,.tab,.chip,.tick,.rnd,.wcard,.pcard,.lvl-chip,.who-btn,.prev{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .a2hs{position:relative;display:flex;gap:10px;align-items:flex-start;margin-top:calc(env(safe-area-inset-top,0px) + 10px);background:var(--surface-2);border-radius:14px;padding:12px 56px 12px 14px;font-size:14px;line-height:1.4;box-shadow:inset 0 0 0 1px var(--accent)}
 .a2hs .sheet-x{top:4px;right:4px;background:transparent}
+.cue-flash{position:fixed;inset:0;z-index:96;pointer-events:none;animation:cueFlash .85s ease-out forwards}
+.cue-flash.go{background:rgba(124,255,107,.34)}
+.cue-flash.rest{background:rgba(77,141,255,.34)}
+.cue-flash.done{background:rgba(255,212,71,.34)}
+@keyframes cueFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
 /* Settings sheet */
 .set-sec{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid var(--line)}
 .set-sec.first{border-top:0;padding-top:0}
@@ -598,7 +643,8 @@ button,.tab,.chip,.tick,.rnd,.wcard,.pcard,.lvl-chip,.who-btn,.prev{-webkit-user
 .lrow.cur{background:var(--surface-2);box-shadow:inset 0 0 0 2px var(--accent)}
 .lrow.cur .lname{color:var(--ink);font-weight:800}
 .lrow.cur .lxp{color:var(--ink)}
-@media (prefers-reduced-motion: reduce){.fx,.fx *,.qc-emb{animation:none!important}.fx-rings,.fx-rays{display:none}.xpbar i{transition:none}}
+@media (prefers-reduced-motion: reduce){.fx,.fx *,.qc-emb{animation:none!important}.fx-rings,.fx-rays{display:none}.xpbar i{transition:none}
+  .fx.boss::before,.boss-whole,.boss-half,.boss-cut,.boss-shards{display:none}.boss-hp i{width:0}}
 </style>
 </head>
 <body>
@@ -1866,7 +1912,9 @@ function liveXP(p,key,s){
 function liveRule(p,s){const {w}=curSession();if(!w)return null;if(s.done&&!s.req)return null;return ruleCheck(s,s.req||workoutReq(p,w));}
 /* ----- Celebrations: a queue of full-screen moments (records, level ups) ----- */
 const fxQ=[];let fxOn=false;
-/* opt: style (inline CSS variables for the moment), confetti (colours), bursts (confetti waves), vibe (vibration pattern) */
+/* opt: style (inline CSS variables for the moment), confetti (colours), bursts (confetti waves), confettiAt (ms before the first wave),
+   vibe (vibration pattern), hold (ms before a tap can close it, so the tap that caused it can't skip it), onShow (runs when it appears,
+   for a sound timed to the animation) */
 function fxShow(html,cls,ms,opt){fxQ.push({html,cls,ms,opt:opt||{}});if(!fxOn)fxNext();}
 function fxNext(){
   const it=fxQ.shift();if(!it){fxOn=false;return;}fxOn=true;const o=it.opt;
@@ -1875,9 +1923,10 @@ function fxNext(){
   document.body.appendChild(el);
   el.querySelectorAll('[data-count]').forEach(n=>countUp(n,+n.dataset.from,+n.dataset.count,n.dataset.fmt));
   try{if(navigator.vibrate)navigator.vibrate(o.vibe||[25,40,70]);}catch(e){}
-  confetti(o.confetti);for(let i=1;i<(o.bursts||1);i++)setTimeout(()=>confetti(o.confetti),i*900);
-  let gone=false;const close=()=>{if(gone)return;gone=true;el.classList.add('out');setTimeout(()=>{el.remove();fxNext();},280);};
-  el.addEventListener('click',close);setTimeout(close,it.ms||2900);
+  if(o.onShow)try{o.onShow();}catch(e){}
+  for(let i=0;i<(o.bursts||1);i++)setTimeout(()=>confetti(o.confetti),(o.confettiAt||0)+i*900);
+  const t0=Date.now();let gone=false;const close=()=>{if(gone)return;gone=true;el.classList.add('out');setTimeout(()=>{el.remove();fxNext();},280);};
+  el.addEventListener('click',()=>{if(Date.now()-t0>=(o.hold||0))close();});setTimeout(close,it.ms||2900);
 }
 function countUp(el,from,to,fmt){
   const show=v=>{el.textContent=fmt==='int'?Math.round(v).toLocaleString('en-AU'):kgS(Math.round(v*10)/10);};
@@ -1930,6 +1979,34 @@ function celebrateLevels(p,delay){
   if(g.level<=p.lvSeen)return;
   const from=p.lvSeen;p.lvSeen=g.level;save();
   setTimeout(()=>levelFx(g,from),delay||0);
+}
+/* ----- Boss slain: the circuit's last round, with every round earning XP -----
+   It's the same test as the boss bonus, so a circuit skipped through never gets the moment. It plays once per workout (c.slain).
+   Reaching it again (rounds unticked and ticked back) or while editing a finished workout just gets the toast. */
+const bossTarget=key=>{const prog=progOfKey(key),P=PROGS[prog];return P&&P.fam==='lr'?circuitTarget(prog,+key.split('|')[3]):0;};
+/* Call after a round is logged, with the XP rounds from before. True when the boss moment played. */
+function bossCheck(key,x0){
+  const p=prof();const s=p&&p.sessions[key];const c=s&&s.circuit;const t=bossTarget(key);
+  if(!c||!t||x0>=t||xpRounds(c)<t)return false;
+  if(c.slain||s.done){toast(`Boss round cleared · +${XP.boss} XP bonus`);return false;}
+  c.slain=Date.now();save();bossFx(c.name||'The circuit',t);return true;
+}
+/* An original horned boss, drawn three times: whole, then as the two halves the slash leaves (clipped corner to corner in CSS) */
+const BOSS_SVG=cls=>`<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true">
+  <path d="M34 46C20 38 13 22 20 6c4 15 13 24 26 28z" fill="#FF4D6D"/><path d="M86 46c14-8 21-24 14-40-4 15-13 24-26 28z" fill="#FF4D6D"/>
+  <path d="M60 24 94 40 98 74 80 104H40L22 74 26 40Z" fill="#2A0E1F" stroke="#FF4D6D" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M34 56l20 7-4 9-13-4z" fill="#FFD447"/><path d="M86 56l-20 7 4 9 13-4z" fill="#FFD447"/>
+  <path d="M40 86l7 8 6-8 7 8 7-8 6 8 7-8" fill="none" stroke="#FF4D6D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+function bossFx(name,rounds){
+  const shards=Array.from({length:12},(_,i)=>`<i style="--a:${i*30+(i%2?8:-8)}deg;--c:${['#FF4D6D','#FFD447','#FFFFFF'][i%3]}"></i>`).join('');
+  fxShow(`<div class="boss-stage" aria-hidden="true">
+      <span class="boss-hp">BOSS<b><i style="--hp:${Math.max(6,Math.round(100/rounds))}%"></i></b></span>
+      <div class="boss-body"><div class="fx-rays"><i></i></div>${BOSS_SVG('boss-whole')}${BOSS_SVG('boss-half a')}${BOSS_SVG('boss-half b')}
+        <span class="boss-cut"><i></i></span><span class="boss-shards">${shards}</span>${CROWN_SVG('boss-crown','#FFD447')}</div></div>
+    <span class="fx-k">BOSS SLAIN</span><span class="fx-type">ALL ${rounds} ROUNDS DONE</span><span class="fx-ex">${esc(name)}</span>
+    <span class="fx-xp">+${XP.boss} XP boss bonus</span><span class="fx-was">Counts when you finish the workout</span>`,
+    'boss',5200,{style:'--tr:rgba(255,212,71,.2)',confetti:['#FF4D6D','#FFD447','#FFFFFF','#FF3DCB'],confettiAt:650,bursts:2,hold:1300,
+      vibe:[1,600,70,50,70,50,240],onShow:()=>cue.boss()});
 }
 
 /* ================= Goals ================= */
@@ -2035,8 +2112,10 @@ function settingsSheet(confirm){
     ${(t=>`${sliderHTML('set','Time per set',t.set,'Do the set, rest for the rest of it')}
     <span class="sl-group">Circuits</span>${sliderHTML('circWork','Time per exercise',t.circWork)}${sliderHTML('circRest','Rest between rounds',t.circRest)}
     <span class="sl-group">HIIT</span>${sliderHTML('hiitWork','Work per move',t.hiitWork)}${sliderHTML('hiitRest','Rest between moves',t.hiitRest)}${sliderHTML('hiitRoundRest','Rest between rounds',t.hiitRoundRest)}
-    <label class="switch"><input type="checkbox" id="tm-sound" ${t.sound?'checked':''}><span>Beep for the last 3 seconds and at each change. Beeps play over Spotify or Apple Music. On iPhone the ring/silent switch mutes them.</span></label>
-    <button type="button" class="btn ghost sm" data-act="test-beep">Play a test beep</button>`)(timers(p))}
+    <label class="switch"><input type="checkbox" id="tm-sound" ${t.sound?'checked':''}><span>Beep for the last 3 seconds and at each change. Beeps mix with Spotify or Apple Music, but on iPhone the ring/silent switch mutes them.</span></label>
+    <button type="button" class="btn ghost sm" data-act="test-beep">Play a test beep</button>
+    ${(a=>`<label class="switch"><input type="checkbox" id="tm-alerts" ${a==='on'?'checked':''}><span><b>Alerts that work on silent and over music.</b> A notification at Go, Rest and Done, with your iPhone's alert sound, or a buzz on silent. Needs the Home Screen app and notification permission.</span></label>
+    ${a==='on'?`<button type="button" class="btn ghost sm" data-act="test-alert">Send a test alert</button>`:a==='blocked'?`<p class="hint">Notifications are off for PR Club. Turn them on in iPhone Settings › Notifications › PR Club.</p>`:''}`)(alertState(p))}`)(timers(p))}
     <p class="hint">The screen stays on while a workout or timer is open.</p></div>
   <div class="set-sec"><h4>Body</h4><p class="hint">Height, age and sex sit with your measurements.</p><button type="button" class="btn ghost sm" data-act="gobody">Open body settings</button></div>`:''}
   <div class="set-sec"><h4>Data on this phone</h4>
@@ -2534,7 +2613,7 @@ function resultsHTML(){
    A running timer keeps startAt (when the current step began) and pausedAt (when paused), never a ticking counter,
    so it stays right when the phone sleeps or the app is in the background, and catches up on return.
    Two views use it: the full-screen player (circuits, HIIT, stretching) and the set timer docked under a workout. */
-const TIMER_DEF={set:180,circWork:30,circRest:60,hiitWork:30,hiitRest:30,hiitRoundRest:120,sound:true};
+const TIMER_DEF={set:180,circWork:30,circRest:60,hiitWork:30,hiitRest:30,hiitRoundRest:120,sound:true,alerts:false};
 /* [min, max, step] in seconds for each slider */
 const TIMER_RANGE={set:[60,300,15],circWork:[20,60,5],circRest:[0,180,15],hiitWork:[20,60,5],hiitRest:[0,60,5],hiitRoundRest:[0,180,15]};
 const timers=p=>Object.assign({},TIMER_DEF,p&&p.timers);
@@ -2564,8 +2643,38 @@ const cue=(()=>{let ctx=null;
     go(){tone(1320,450,.7,'triangle');buzz([180]);},
     rest(){tone(620,450,.6,'triangle');buzz([80,60,80]);},
     done(){tone(990,170,.55,'triangle');setTimeout(()=>tone(1320,170,.55,'triangle'),190);setTimeout(()=>tone(1760,400,.6,'triangle'),380);buzz([80,60,80,60,200]);},
+    /* Boss slain: a heavy hit as the slash lands (0.6 s into the animation), then a rising four-note fanfare. The animation does the buzz. */
+    boss(){setTimeout(()=>{tone(110,420,.5,'sawtooth');tone(220,240,.45,'square');},600);
+      [784,988,1175,1568].forEach((f,i)=>setTimeout(()=>tone(f,i===3?650:150,.55,'triangle'),1000+i*130));},
     state:()=>ctx?ctx.state:'none'
   };})();
+/* ----- Alerts that get through Spotify and the silent switch -----
+   A web page can only mix its sound with another app's music by using the kind of sound the ring/silent switch mutes,
+   and since iOS 18.4 it can't buzz the phone without a tap. A notification is different: iPhone plays its sound over
+   music like any app's alert, and vibrates on silent. So, as an opt-in, the timers also post a notification at the
+   moments that matter (Go, Rest, Done), never for the 3-2-1 count. Needs the Home Screen app (iOS 16.4 and later)
+   and notification permission. Each alert replaces the last one (same tag) and is cleared after a few seconds. */
+const ALERT_TAG='pr-club-timer';
+const alertsPossible=()=>'Notification' in window&&'serviceWorker' in navigator&&!framed;
+function timerAlert(title,body){
+  const p=prof();if(!p||!timers(p).alerts||!alertsPossible()||Notification.permission!=='granted')return;
+  navigator.serviceWorker.getRegistration().then(reg=>{if(!reg)return;
+    return reg.showNotification(title,{body,tag:ALERT_TAG,renotify:true,silent:false,icon:'icons/icon-192.png',badge:'icons/icon-192.png'})
+      .then(()=>setTimeout(()=>reg.getNotifications({tag:ALERT_TAG}).then(ns=>ns.forEach(n=>n.close())).catch(()=>{}),8000));}).catch(()=>{});
+}
+/* One answer for the switch, the test button and the hint: on, blocked (allowed here but notifications are off for the app), off, or unsupported */
+const alertState=p=>!alertsPossible()?'unsupported':!timers(p).alerts?'off':Notification.permission==='granted'?'on':'blocked';
+/* Asked from the tap on the Settings switch, which iPhone requires. Resolves true when alerts can be shown. */
+function enableAlerts(){
+  if(!alertsPossible())return Promise.resolve('unsupported');
+  if(Notification.permission==='granted')return Promise.resolve('granted');
+  try{return Promise.resolve(Notification.requestPermission()).then(r=>r||Notification.permission).catch(()=>'denied');}catch(e){return Promise.resolve('denied');}
+}
+/* A full-screen colour pulse for the same moments, so there's a cue you can catch out of the corner of your eye */
+function flashCue(kind){
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const el=document.createElement('div');el.className='cue-flash '+(kind||'go');el.setAttribute('aria-hidden','true');document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+}
 /* Keep the screen on while a workout or timer is open. Best effort: unsupported browsers just carry on. */
 const wake={lock:null,want:false,
   async on(){this.want=true;try{if(!this.lock&&navigator.wakeLock&&document.visibilityState==='visible'){this.lock=await navigator.wakeLock.request('screen');this.lock.addEventListener('release',()=>{this.lock=null;});}}catch(e){this.lock=null;}},
@@ -2640,6 +2749,10 @@ function startPlayer(title,kind,steps,ctx){
   ui.player={title,kind,steps,i:0,startAt:Date.now(),pausedAt:null,done:false,t0:Date.now(),total:stepsTotal(steps),ctx:ctx||null,logged:0,skipped:0,spent:[],beep:''};
   ui.mode='player';sheet('');openOverlay();wake.on();stepCue(ui.player);
 }
+/* Notification and flash for a step the player moved to on its own (a tap means you're already looking) */
+function stepAlert(pl){const s=pl.steps[pl.i];if(!s||s.kind==='ready')return;
+  flashCue(s.kind==='rest'?'rest':'go');
+  timerAlert(s.kind==='rest'?`Rest ${durLabel(s.secs)}`:`Go: ${s.label}`,s.sub||pl.title);}
 /* Sound and announcement for the step the player has just entered */
 function stepCue(pl){const s=pl.steps[pl.i];if(!s)return;(s.kind==='work'?cue.go:s.kind==='rest'?cue.rest:cue.count)();announce(`${s.kind==='work'?'Go':s.kind==='rest'?'Rest':'Get ready'}: ${s.label}, ${durLabel(s.secs)}`);}
 /* Share of the work steps (optionally one round's) that actually ran */
@@ -2650,8 +2763,9 @@ function passStep(pl,s){
   if(pl.kind!=='circuit'||!s||s.kind!=='work'||!s.endsRound)return;
   if(workDone(pl,s.round)<ROUND_WORK_MIN){pl.skipped++;toast(`Round ${s.round} skipped, so it isn't logged`);return;}
   const p=prof();const ss=p.sessions[pl.ctx.key];if(!ss)return;const c=ss.circuit=ss.circuit||{rounds:0};
-  pl.logged++;if(c.xr==null)c.xr=c.rounds||0;
+  pl.logged++;if(c.xr==null)c.xr=c.rounds||0;const x0=xpRounds(c);
   c.rounds=Math.max(c.rounds||0,pl.logged);c.xr=Math.max(c.xr,pl.logged);c.at=Date.now();if(!c.name)c.name=pl.ctx.name;save();
+  if(bossCheck(pl.ctx.key,x0))pl.slain=true;
 }
 /* Move the player by d steps. auto: the step ran out, so the next one starts at the exact boundary (catching up after the screen was off).
    A tap starts the next step now. Back restarts the current step unless it's only just begun. */
@@ -2663,7 +2777,7 @@ function playerMove(d,auto){
   if(d<0&&elapsedOf(pl)>3){pl.startAt=now;if(pl.pausedAt)pl.pausedAt=now;return;}
   if(d>0)passStep(pl,cur);
   const ni=pl.i+d;
-  if(ni>=pl.steps.length){pl.done=true;finishPlayer(pl);return;}
+  if(ni>=pl.steps.length){pl.done=true;finishPlayer(pl,auto);return;}
   pl.i=Math.max(0,ni);
   pl.startAt=auto?pl.startAt+cur.secs*1000:now;if(pl.pausedAt)pl.pausedAt=now;
 }
@@ -2675,19 +2789,27 @@ function playerExitSheet(){
   sheet(`<h3>Stop the timer?</h3><p class="hint">${circ?`${pl.logged} round${pl.logged===1?' is':'s are'} logged so far and stay logged.`:`You've done ${mmss(done)} of ${mmss(pl.total)}. Finish at least 60% to earn the side quest XP.`} The timer is paused.</p>
   <div class="row"><button type="button" class="btn ghost" data-act="closesheet">Keep going</button><button type="button" class="btn danger" data-act="pl-exit-yes">Stop</button></div>`);
 }
-function finishPlayer(pl){
-  wake.on();cue.done();
+/* A circuit's end also settles the boss: slain just now (the boss moment already has its own sound and flash),
+   beaten on an earlier run, or survived because a round was skipped */
+function finishPlayer(pl,auto){
+  wake.on();const circ=pl.kind==='circuit';
+  if(circ){const t=bossTarget(pl.ctx.key);const s=(prof()||{sessions:{}}).sessions[pl.ctx.key];
+    pl.bossT=t;pl.boss=!t?'':pl.slain?'slain':xpRounds(s&&s.circuit)>=t?'beaten':'survived';}
+  if(!pl.slain)cue.done();
+  if(auto){if(!pl.slain)flashCue('done');
+    timerAlert(circ?(pl.slain?'Boss slain':'Circuit done'):`${pl.title} done`,circ?(pl.slain?`All ${pl.bossT} rounds. Back to your workout to finish up.`:'Back to your workout to finish up.'):'Nice work.');}
   if(pl.kind==='hiit'||pl.kind==='stretch')sideQuestDone(pl);
-  announce(pl.kind==='circuit'?`Circuit done. ${pl.logged} rounds logged.`:`${pl.title} done.`);
+  announce(circ?`Circuit done. ${pl.logged} rounds logged.${pl.slain?' Boss slain.':''}`:`${pl.title} done.`);
 }
 function playerHTML(){
   const pl=ui.player;
   if(pl.done){
     const circ=pl.kind==='circuit';
-    const msg=circ?`${pl.logged} round${pl.logged===1?'':'s'} logged in the workout.${pl.skipped?` ${pl.skipped} skipped round${pl.skipped===1?' was':'s were'} left out.`:''}`
+    const msg=circ?(pl.slain?`All ${pl.bossT} rounds logged in the workout. The <span class="xpt">+${XP.boss} XP</span> boss bonus counts when you finish the workout.`
+        :`${pl.logged} round${pl.logged===1?'':'s'} logged in the workout.${pl.skipped?` ${pl.skipped} skipped round${pl.skipped===1?' was':'s were'} left out.`:''}${pl.boss==='survived'?` The boss survived: its +${XP.boss} XP bonus needs all ${pl.bossT} rounds.`:''}`)
       :pl.xp?`<span class="xpt">+${XP.side} XP</span> added.`:pl.already?'Already counted today. Nice extra work.':'No XP this time: most of it was skipped. Do the full routine to earn it.';
     return `<header class="wo-top"><div class="wo-row"><button type="button" class="back" data-act="pl-exit" aria-label="${circ?'Back to workout':'Close'}">${IC.back}</button><div class="wo-title"><h2>${esc(pl.title)}</h2></div></div></header>
-    <div class="player">${CROWN_SVG('qc-emb','#7CFF6B')}<span class="pl">${circ?'Circuit done':pl.xp||pl.already?'Side quest done':'Routine finished'}</span><p class="hint" style="max-width:34ch;text-align:center">${msg}</p>
+    <div class="player">${CROWN_SVG('qc-emb',pl.slain?'#FFD447':'#7CFF6B')}<span class="pl">${circ?(pl.slain?'Boss slain':'Circuit done'):pl.xp||pl.already?'Side quest done':'Routine finished'}</span><p class="hint" style="max-width:34ch;text-align:center">${msg}</p>
     <button type="button" class="btn" data-act="pl-exit">${circ?'Back to workout':'Done'}</button></div>`;
   }
   const s=pl.steps[pl.i];const nx=pl.steps[pl.i+1];const left=s.secs-elapsedOf(pl);
@@ -2718,7 +2840,7 @@ function updatePlayer(){
   const pl=ui.player;if(ui.mode!=='player'||!pl||pl.done||pl.pausedAt)return;
   const i0=pl.i;let guard=0;
   while(!pl.done&&elapsedOf(pl)>=pl.steps[pl.i].secs&&guard++<1000)playerMove(1,true);
-  if(pl.done||pl.i!==i0){if(!pl.done)stepCue(pl);renderOverlay();return;}
+  if(pl.done||pl.i!==i0){if(!pl.done){stepCue(pl);stepAlert(pl);}renderOverlay();return;}
   const s=pl.steps[pl.i];const left=s.secs-elapsedOf(pl);const sec=Math.ceil(left);
   if(sec<=3&&sec>=1&&pl.beep!==pl.i+':'+sec){pl.beep=pl.i+':'+sec;cue.count();}
   const t=$('#pl-t');if(t)t.textContent=mmss(left);
@@ -2767,7 +2889,9 @@ function updateSetTimer(force){
   const st=ui.st;const dur=timers(prof()).set;
   if(!st.done&&!st.pausedAt){
     let moved=false,guard=0;while(!st.done&&elapsedOf(st)>=dur&&guard++<200){stMove(1,true);moved=true;}
-    if(moved){if(st.done){cue.done();announce('Every set logged');}else{cue.go();const x=stSteps()[stIndex(stSteps())];announce(`Go: ${x.name}, set ${x.i+1}`);}paintSetTimer(true);return;}
+    if(moved){if(st.done){cue.done();flashCue('done');announce('Every set logged');timerAlert('Every set logged','Finish the workout when you are ready.');}
+      else{cue.go();flashCue('go');const x=stSteps()[stIndex(stSteps())];announce(`Go: ${x.name}, set ${x.i+1}`);timerAlert(`Go: set ${x.i+1} of ${x.n}`,x.name);}
+      paintSetTimer(true);return;}
     const sec=Math.ceil(dur-elapsedOf(st));if(sec<=3&&sec>=1&&st.beep!==st.sid+st.i+':'+sec){st.beep=st.sid+st.i+':'+sec;cue.count();}
   }
   if(force){paintSetTimer();return;}
@@ -3024,7 +3148,7 @@ document.addEventListener('click',ev=>{
     case 'addset':{const {s}=curSession();s.ex[a.dataset.sid].sets.push({kg:null,reps:null,done:false});save();renderOverlay();break;}
     case 'delset':{const {s}=curSession();const e=s.ex[a.dataset.sid];if(e.sets.length>1&&!e.sets[e.sets.length-1].done)e.sets.pop();save();renderOverlay();break;}
     case 'note':ui.noteOpen[a.dataset.sid]=!ui.noteOpen[a.dataset.sid];renderOverlay();{const t=$('#note-'+a.dataset.sid);if(t)t.focus();}break;
-    case 'round':{const {p:pp,w,s,key}=curSession();const c=s.circuit;const n=+a.dataset.n;const was=c.rounds||0;const x0=xpRounds(c);
+    case 'round':{const {w,s,key}=curSession();const c=s.circuit;const n=+a.dataset.n;const was=c.rounds||0;const x0=xpRounds(c);
       if(n<=was){c.rounds=n===was?n-1:n;if(c.xr!=null)c.xr=Math.min(c.xr,c.rounds);}
       else{
         /* One XP round per tap, and only if it comes a plausible round-time after the last one */
@@ -3035,7 +3159,7 @@ document.addEventListener('click',ev=>{
         if(added>earned)toast(`${added>1?`Rounds ${was+1} to ${n}`:`Round ${n}`} logged. ${earned?'Only one earns XP':'No XP'}: tap each round as you finish it, or use the circuit timer.`);
       }
       if(w.circuit)c.name=w.circuit.name;save();renderOverlay();
-      const t=circuitTarget(progOfKey(key),pp.week);if(t&&xpRounds(c)>=t&&x0<t)toast(`Boss round cleared · +${XP.boss} XP bonus`);break;}
+      bossCheck(key,x0);break;}
     case 'effort':{const {s}=curSession();s.circuit.effort=s.circuit.effort===a.dataset.v?null:a.dataset.v;save();renderOverlay();break;}
     case 'st-start':{const steps=stSteps();const x=steps.find(y=>!y.done);if(!x){toast('Every set is already logged');break;}stStart(x.sid,x.i);cue.go();paintSetTimer(true);break;}
     case 'st-pause':{const st=ui.st;if(!st)break;if(st.pausedAt){st.startAt+=Date.now()-st.pausedAt;st.pausedAt=null;}else st.pausedAt=Date.now();paintSetTimer();break;}
@@ -3076,7 +3200,11 @@ document.addEventListener('click',ev=>{
     case 'gobody':state.tab='body';save();sheet('');render();setTimeout(()=>{const el=$('#body-settings');if(el)window.scrollTo(0,el.getBoundingClientRect().top+scrollY-70);},60);break;
     case 'resetdemo':settingsSheet('demo');break;
     case 'backup':backupSheet();break;
-    case 'test-beep':if(!timers(p).sound){toast('Beeps are switched off');break;}cue.unlock();setTimeout(()=>cue.go(),60);toast(cue.state()==='running'||cue.state()==='suspended'?'Beep. Nothing? Check the ring/silent switch and volume':'This browser has no sound for web pages');break;
+    case 'test-beep':{if(!timers(p).sound){toast('Beeps are switched off');break;}cue.unlock();setTimeout(()=>cue.go(),60);
+      /* A sound check you can read off the screen: can this phone mix with music, and is sound running */
+      const mix=!!navigator.audioSession,st=cue.state();
+      toast(st==='none'?'This browser has no sound for web pages':`Beep sent. ${mix?'Mixes with music':'This iOS version can\'t mix with music'}, sound ${st==='running'?'on':st}. Silent? The ring/silent switch mutes it.`);break;}
+    case 'test-alert':timerAlert('Go: set 2 of 4','This is how timer alerts look and sound.');toast(alertsPossible()&&Notification.permission==='granted'?'Alert sent. Nothing? Check Settings › Notifications › PR Club':'Alerts aren\'t allowed yet');break;
     case 'a2hs-x':state.a2hsSeen=true;save();render();break;
     case 'backup-copy':{const el=$('#bk-out');const txt=el?el.value:'';
       const done=()=>toast('Backup copied');const fallback=()=>{if(el){el.focus();el.select();try{document.execCommand('copy');done();}catch(e){toast('Select the text and copy it');}}};
@@ -3151,6 +3279,10 @@ document.addEventListener('change',ev=>{
   else if(t.id==='wo-date'&&ui.open){const {s}=curSession();if(t.value)s.date=t.value;save();}
   else if(t.id==='prog-ex'){ui.progEx=t.value;render();}
   else if(t.id==='lv-adult'){p.names=t.checked?'adult':'fun';save();render();settingsSheet();toast(t.checked?`Adult names on: ${game(p).lv.name}`:`Standard names: ${game(p).lv.name}`);}
+  else if(t.id==='tm-alerts'){
+    if(!t.checked){p.timers=Object.assign({},p.timers,{alerts:false});save();settingsSheet();}
+    else enableAlerts().then(r=>{p.timers=Object.assign({},p.timers,{alerts:r==='granted'});save();settingsSheet();const a=alertState(p);
+      toast(a==='on'?'Alerts on. Tap Send a test alert':r==='unsupported'?'Alerts need PR Club opened from your Home Screen':'Notifications are off for PR Club. Turn them on in iPhone Settings › Notifications');});}
   else if(t.id==='tm-sound'){p.timers=Object.assign({},p.timers,{sound:t.checked});save();if(t.checked){cue.unlock();cue.count();}}
   else if(t.dataset&&t.dataset.pick!=null&&ui.setup){const s=ui.setup.picks[+t.dataset.pick];s.on=t.checked;const off=new Set(ui.setup.off||[]);if(t.checked)off.delete(s.sid);else off.add(s.sid);ui.setup.off=[...off];}
   if(t.id==='bk-file'&&t.files&&t.files[0]){const r=new FileReader();r.onload=()=>{const box=$('#bk-in');if(box)box.value=String(r.result||'');toast(readBackup(r.result)?'Backup loaded. Tap Restore to use it':"That file isn't a PR Club backup");};r.readAsText(t.files[0]);}
