@@ -989,7 +989,8 @@ Wrist curls|F|3||iZIFFPZBPo4
 Wrist extension|F|3||CL26B2ufmAY
 Y-T-L|S|6||5DLcYmUXHms`;
 
-/* Circuit library (Lean & Ripped "Circuit data"): name | follow-along video | moves */
+/* Circuit library: name | follow-along video | moves. Circuits 1 to 35 are Lean & Ripped's "Circuit data".
+   36 to 53 are the Tone & Shape circuits Lean & Ripped doesn't have (its others are the same videos as 1 to 35). */
 const CIRC_SRC=`Circuit 1|lDTT5QqKn0M|Single arm row/Incline push ups/High plank with shoulder tap/Goblet squat
 Circuit 2|Pji8Y4gPUbA|Step up (alternating)/Bench dips/Walk out (inch worm)/Plank with shoulder taps
 Circuit 3|KEWGFWbeilo|Chest fly/Skull crusher/Lateral raise/Plank with shoulder tap
@@ -1024,54 +1025,74 @@ Circuit 31|D66N75EftbI|Dead bug/Ab crunch/Reverse crunch/Oblique crunch
 Circuit 32|7ml-cMUKMsc|Bridge abduction/Seated abduction/Standing abduction/Kickbacks
 Circuit 33|_FOPldPoDeA|Lunge with leg extension/Hindu push-up/Lunge with leg extension/Hindu squat
 Circuit 34|CZaW06T-GBA|BB front raise/BB drag curl/BB upright row/BB over the head
-Circuit 35|PElh_8_t-uA|Arabesque R/Arabesque L/Reverse lunge R/Reverse lunge L`;
+Circuit 35|PElh_8_t-uA|Arabesque R/Arabesque L/Reverse lunge R/Reverse lunge L
+Circuit 36|Uh8h-2z5qAw|Banded squats/Crab walks/Frog pumps/Glute bridges
+Circuit 37|JjuAYpoM6uU|Overhead press/Front squats/Row/Reverse lunge
+Circuit 38|V1vufKCJOeQ|Plie squats/Push up/Rainbow plank/Supermans
+Circuit 39|3WcpQr71tHE|Jump squats/Bent over row/Push press/Reverse grip rows
+Circuit 40|cFOdyQScMgI|Reverse crunches/Crunches/Side planks/Hundreds
+Circuit 41|xzWaRtjb8GY|Reverse burpee/Walk out/Cossack squats/Squat hold with pulse
+Circuit 42|W2MiN18yti4|DB clean and press/DB renegade row/DB RDL/DB push press
+Circuit 43|n_bun0Sfh5Y|KB swing/KB pass through L/KB high pull/KB pass through R
+Circuit 44|Ej243vXP8N4|Curl to press/DB renegade row/Plank with DB slide/Alternating side plank
+Circuit 45|DQu1oLS9kkE|RB face pull/RB rotations/RB row/RB pull aparts
+Circuit 46|ExfFYtTDMbY|DB push press/DB forward lunges/DB front squat/DB renegade row
+Circuit 47|h1V5tEQ5Z3k|Hamstring curls/Crunches/Push ups/Hold reverse crunches
+Circuit 48|jVUqPBmlhpk|Snatch grip RDL/Wide grip row/Overhead press/Upright row
+Circuit 49|1jfvkhtglBw|Box squats/Incline push ups/Crunches/Glute bridges
+Circuit 50|SfQvN1LYcy4|Crab walks/Hamstring curls/Glute bridges/Pull apart
+Circuit 51|R9rTldNo5Eg|Overhead press/Bicep curls/Rows/Squat hold with steering wheel
+Circuit 52|GlR7wCVhJqg|Bridge/Metronome/Toe taps/Modified plank holds
+Circuit 53|eQ0C7ntTD2E|Superman/Bird dog/Reverse crunches/Standing oblique crunches`;
 
-/* Programmes. lr = Lean & Ripped (lifts + circuit). ss = Build Size & Strength (straight sets).
+/* Programmes. lr = lifts + circuit: Lean & Ripped on the male path, Tone & Shape on the female path. ss = Build Size & Strength (straight sets).
+   path=m or path=f limits an option to one path (see pathOf); options without it are offered on both.
+   The Tone & Shape blocks (path=f, at the end) come from the Tone & Shape Weeks 1-4 template, which has one block per level.
    Header: @family|level|block|key=value…  Workout line: W|name|slot|slot…
    lr slot: Order~Muscle~Exercise, circuit: D~Circuit N.  ss slot: Muscle~Exercise~Reps (sets from header). */
-const PROG_SRC=`@lr|Beginner|1-4|opt=1|name=Dumbbell foundations|by=core|tags=home|about=Dumbbell and bodyweight basics you can do at home: deadlifts, push-ups, rows, squats and presses, with a circuit to finish every session.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10|B=3:10|C=3:10|extra=Wed · HIIT cardio 20 min
+const PROG_SRC=`@lr|Beginner|1-4|opt=1|path=m|name=Dumbbell foundations|by=core|tags=home|about=Dumbbell and bodyweight basics you can do at home: deadlifts, push-ups, rows, squats and presses, with a circuit to finish every session.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10|B=3:10|C=3:10|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~DB deadlift (home)|B~Chest~Push up|C~Back~DB bent over row|D~Circuit 10
 W|Workout 2|A~Quads~Heel elevated squat|B~Shoulders~DB overhead press|C~Hamstrings~DB RDL (home)|D~Circuit 11
 W|Workout 3|A~Glutes~High step up|B~Chest~Chair dips (home)|C~Back~DB pull over|D~Circuit 12
 W|Workout 4|A~Quads~Alternating reverse lunge|B~Shoulders~DB arnold press|C~Hamstrings~Long leg march (home)|D~Circuit 13
-@lr|Beginner|5-8|opt=2|name=Dumbbell progressions|by=core|tags=small|about=Harder versions of the basics, like deficit push-ups, sprinter lunges, hip raises and the push press. Suits a small gym.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10|B=3:10|C=3:10|extra=Wed · HIIT cardio 20 min
+@lr|Beginner|5-8|opt=2|path=m|name=Dumbbell progressions|by=core|tags=small|about=Harder versions of the basics, like deficit push-ups, sprinter lunges, hip raises and the push press. Suits a small gym.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10|B=3:10|C=3:10|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~Sprinter lunge (home)|B~Chest~Deficit push up|C~Back~DB lat swing|D~Circuit 14
 W|Workout 2|A~Quads~Alternating forward lunge|B~Shoulders~DB push press|C~Hamstrings~Feet elevated hip raise (home)|D~Circuit 15
 W|Workout 3|A~Glutes~Hip raise|B~Chest~DB incline press|C~Back~DB single arm row|D~Circuit 16
 W|Workout 4|A~Quads~Hindu squat|B~Shoulders~BB push press|C~Hamstrings~Feet elevated hip raise (home)|D~Circuit 17
-@lr|Beginner|9-12|opt=3|name=Barbell starter|by=core|tags=gym|about=Brings in the barbell: deadlift, bench press, back squat and overhead press, plus swings and the leg press.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10|B=3:10|C=3:10|extra=Wed · HIIT cardio 20 min
+@lr|Beginner|9-12|opt=3|path=m|name=Barbell starter|by=core|tags=gym|about=Brings in the barbell: deadlift, bench press, back squat and overhead press, plus swings and the leg press.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10|B=3:10|C=3:10|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~BB deadlift|B~Chest~BB bench press|C~Back~BB bent over row (underhand grip)|D~Circuit 18
 W|Workout 2|A~Quads~BB back squat|B~Shoulders~BB overhead press|C~Hamstrings~BB RDL|D~Circuit 19
 W|Workout 3|A~Glutes~KB swing|B~Chest~Deficit push up|C~Back~Cable seated row|D~Circuit 20
 W|Workout 4|A~Quads~Leg press|B~Shoulders~BB push press|C~Hamstrings~DB deficit RDL|D~Circuit 21
-@lr|Intermediate|1-4|opt=1|name=Lifts and circuits|by=core|tags=gym|about=Sumo deadlifts, front squats and barbell rows, with five circuit rounds every session.|days=0,1,4,5|rounds=5|time=30s|A=3/4/4/4:8-12|B=3:12-15|C=3:15-20|extra=Wed · HIIT cardio 20 min
+@lr|Intermediate|1-4|opt=1|path=m|name=Lifts and circuits|by=core|tags=gym|about=Sumo deadlifts, front squats and barbell rows, with five circuit rounds every session.|days=0,1,4,5|rounds=5|time=30s|A=3/4/4/4:8-12|B=3:12-15|C=3:15-20|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~BB sumo deadlift|B~Quads~Goblet squat|C~Calves~Calf raise|D~Circuit 20
 W|Workout 2|A~Chest~DB chest press|B~Back~Cable seated row|C~Triceps~DB tricep overhead extension|D~Circuit 21
 W|Workout 3|A~Quads~BB front squat|B~Hamstrings~BB stiff leg deadlift|C~Glutes~Cable pull through|D~Circuit 22
 W|Workout 4|A~Back~BB bent over row|B~Shoulders~BB overhead press|C~Biceps~BB bicep curl|D~Circuit 23
-@lr|Intermediate|5-8|opt=2|name=Volume builder|by=core|tags=gym|about=Four sets on the main lift, with heel-elevated squats, Swiss ball hamstring curls and the push press.|days=0,1,4,5|rounds=5|time=30s|A=4:8-12|B=3:12-15|C=3:15-20|extra=Wed · HIIT cardio 20 min
+@lr|Intermediate|5-8|opt=2|path=m|name=Volume builder|by=core|tags=gym|about=Four sets on the main lift, with heel-elevated squats, Swiss ball hamstring curls and the push press.|days=0,1,4,5|rounds=5|time=30s|A=4:8-12|B=3:12-15|C=3:15-20|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~BB sumo deadlift|B~Quads~Heel elevated squat|C~Calves~Calf raise (home)|D~Circuit 24
 W|Workout 2|A~Chest~DB chest press|B~Back~Cable standing row|C~Triceps~Diamond push up|D~Circuit 25
 W|Workout 3|A~Quads~BB back squat|B~Hamstrings~Hamstring curl (swiss ball)|C~Glutes~S/L deadlift (arabesque)|D~Circuit 26
 W|Workout 4|A~Back~Lat pulldown|B~Shoulders~BB push press|C~Biceps~BB bicep curl|D~Circuit 27
-@lr|Intermediate|9-12|opt=3|name=Chin-ups, dips and cleans|by=core|tags=gym|about=Hip thrusts, chin-ups, dips and the hang clean and press.|days=0,1,4,5|rounds=5|time=30s|A=4:8-12|B=3:12-15|C=3:15-20|extra=Wed · HIIT cardio 20 min
+@lr|Intermediate|9-12|opt=3|path=m|name=Chin-ups, dips and cleans|by=core|tags=gym|about=Hip thrusts, chin-ups, dips and the hang clean and press.|days=0,1,4,5|rounds=5|time=30s|A=4:8-12|B=3:12-15|C=3:15-20|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~BB hip thrust|B~Quads~Goblet squat|C~Calves~Single-leg calf raise|D~Circuit 28
 W|Workout 2|A~Chest~DB incline press|B~Back~DB bent over row|C~Triceps~Dips|D~Circuit 29
 W|Workout 3|A~Quads~BB front squat|B~Hamstrings~DB deficit RDL|C~Glutes~High step up|D~Circuit 30
 W|Workout 4|A~Back~Chin up|B~Shoulders~BB hang clean and press|C~Biceps~DB bicep curl|D~Circuit 31
-@lr|Advanced|1-4|opt=1|name=Five-day builder|by=core|tags=gym|about=Five sessions with sets climbing from 3 to 4. Deadlifts, pendlay rows, chin-ups, split squats and the overhead press.|days=0,1,3,4,5|rounds=5|time=30s/30s/30-45s/30-45s|A=3/4/4/4:5-10|B=3/3/4/4:10-15|C=3/3/3/4:15-20/15-20+/15-20+/15-20+|extra=Wed · HIIT cardio 20 min|src=edited
+@lr|Advanced|1-4|opt=1|path=m|name=Five-day builder|by=core|tags=gym|about=Five sessions with sets climbing from 3 to 4. Deadlifts, pendlay rows, chin-ups, split squats and the overhead press.|days=0,1,3,4,5|rounds=5|time=30s/30s/30-45s/30-45s|A=3/4/4/4:5-10|B=3/3/4/4:10-15|C=3/3/3/4:15-20/15-20+/15-20+/15-20+|extra=Wed · HIIT cardio 20 min|src=edited
 W|Workout 1|A~Glutes~BB deadlift|B~Quads~Leg press|C~Calves~Single-leg calf raise|D~Circuit 20
 W|Workout 2|A~Chest~DB chest press|B~Back~Chin up|C~Biceps~Cable bayesian curl|D~Circuit 21
 W|Workout 3|A~Back~BB pendlay row|B~Chest~Close grip push up|C~Triceps~Dips|D~Circuit 22
 W|Workout 4|A~Quads~DB rear foot elevated split squat|B~Hamstrings~Hamstring curl (swiss ball)|C~Glutes~S/L hip raise|D~Circuit 23
 W|Workout 5|A~Shoulders~BB overhead press|B~Chest~Deficit push up|C~Back~Cable seated row|D~Circuit 24
-@lr|Advanced|5-8|opt=2|name=Jumps and cables|by=core|tags=gym|about=Arabesques, box jumps and plenty of cable work over five sessions. The block the sample lifter is logging.|days=0,1,3,4,5|rounds=5|time=30s/30s/30-45s/30-45s|A=3/4/4/4:5-10|B=3/3/4/4:10-15|C=3/3/3/4:15-20/15-20+/15-20+/15-20+|extra=Wed · HIIT cardio 20 min
+@lr|Advanced|5-8|opt=2|path=m|name=Jumps and cables|by=core|tags=gym|about=Arabesques, box jumps and plenty of cable work over five sessions. The block the sample lifter is logging.|days=0,1,3,4,5|rounds=5|time=30s/30s/30-45s/30-45s|A=3/4/4/4:5-10|B=3/3/4/4:10-15|C=3/3/3/4:15-20/15-20+/15-20+/15-20+|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~Arabesque (S/L deadlift)|B~Quads~Box jump|C~Calves~Calf raise (home)|D~Circuit 25
 W|Workout 2|A~Chest~DB incline press|B~Back~Cable seated row|C~Biceps~Cable ropes curl|D~Circuit 31
 W|Workout 3|A~Back~Chin up|B~Chest~Deficit push up|C~Triceps~Dips|D~Circuit 28
 W|Workout 4|A~Quads~Leg press|B~Hamstrings~Machine seated hamstring curl|C~Glutes~Cable pull through|D~Circuit 34
 W|Workout 5|A~Shoulders~BB push press|B~Chest~Cable chest fly|C~Back~BB bent over row (overhand grip)|D~Circuit 29
-@lr|Advanced|9-12|opt=3|name=Hardest circuits|by=core|tags=gym|about=Split squats, chest flys and some of the toughest circuits in the app, over five sessions.|days=0,1,3,4,5|rounds=5|time=30s/30s/30-45s/30-45s|A=3/4/4/4:5-10|B=3/3/4/4:10-15|C=3/3/3/4:15-20/15-20+/15-20+/15-20+|extra=Wed · HIIT cardio 20 min
+@lr|Advanced|9-12|opt=3|path=m|name=Hardest circuits|by=core|tags=gym|about=Split squats, chest flys and some of the toughest circuits in the app, over five sessions.|days=0,1,3,4,5|rounds=5|time=30s/30s/30-45s/30-45s|A=3/4/4/4:5-10|B=3/3/4/4:10-15|C=3/3/3/4:15-20/15-20+/15-20+/15-20+|extra=Wed · HIIT cardio 20 min
 W|Workout 1|A~Glutes~BB deadlift|B~Quads~Heel elevated squat|C~Calves~Single-leg calf raise|D~Circuit 30
 W|Workout 2|A~Chest~DB chest press|B~Back~Cable straight arm pull down|C~Biceps~DB incline curl|D~Circuit 31
 W|Workout 3|A~Back~Chin up|B~Chest~DB chest fly|C~Triceps~Dips|D~Circuit 21
@@ -1326,7 +1347,35 @@ W|Upper|Chest~DB incline press~8-12|Back~Renegade row~8-10|Shoulders~DB overhead
 @ss|Advanced|o10|opt=10|name=Full body|tags=strength,muscle|days=0,2,4|sets=3/3/4/4|extra=Walk 20 to 30 min on two rest days|about=Three hard full-body sessions for a busy week. Most muscles get two or three sessions a week, with a different main lift each day.
 W|Workout 1|Quads~BB back squat~5-8|Chest~BB bench press~6-8|Back~Chin up~6-10|Hamstrings~Machine lying hamstring curl~10-12|Shoulders~DB lateral raise~12-15|Core~Hanging leg raise~10-12
 W|Workout 2|Glutes~BB deadlift~4-6|Shoulders~BB overhead press~6-8|Back~Cable seated row~8-12|Quads~DB rear foot elevated split squat~8-12|Biceps~DB incline curl~10-15|Triceps~Cable overhead tricep extension~10-15
-W|Workout 3|Quads~BB front squat~6-8|Chest~DB incline press~8-12|Back~BB pendlay row~6-8|Glutes~BB hip thrust~8-12|Shoulders~Cable face pull~15-20|Core~Pallof press~12`;
+W|Workout 3|Quads~BB front squat~6-8|Chest~DB incline press~8-12|Back~BB pendlay row~6-8|Glutes~BB hip thrust~8-12|Shoulders~Cable face pull~15-20|Core~Pallof press~12
+@lr|Beginner|ts|opt=1|path=f|name=Dumbbells and circuits|by=core|tags=home|about=Three dumbbell lifts for 3 sets of 10 to 12, then a core, band or dumbbell circuit. Four sessions a week, plus cardio of your choice on Wednesday.|days=0,1,4,5|rounds=3-5|time=30s|A=3:10-12|B=3:10-12|C=3:10-12|extra=Wed · cardio of your choice|for=0 to 1 year of training
+W|Workout 1|A~Chest~DB chest press|B~Back~DB chest supported row|C~Shoulders~DB overhead press|D~Circuit 52
+W|Workout 2|A~Glutes~Arabesque (S/L deadlift)|B~Quads~Alternating forward lunge|C~Hamstrings~DB deficit RDL|D~Circuit 50
+W|Workout 3|A~Back~DB bent over row|B~Triceps~DB tricep overhead extension|C~Biceps~DB bicep curl|D~Circuit 53
+W|Workout 4|A~Quads~Goblet squat|B~Glutes~Sprinter lunge (home)|C~Calves~Calf raise|D~Circuit 51
+@lr|Intermediate|ts|opt=1|path=f|name=Barbell and circuits|by=core|tags=gym|about=Deadlifts, bench press, squats and rows lead each session, then five rounds of a 4-move circuit. Cardio of your choice on Wednesday.|days=0,1,4,5|rounds=5|time=30s|A=4:8-12|B=3:12-15|C=3:15-20|extra=Wed · cardio of your choice|for=1 to 2 years of training
+W|Workout 1|A~Glutes~BB deadlift|B~Quads~Heel elevated squat|C~Calves~Single-leg calf raise|D~Circuit 1
+W|Workout 2|A~Chest~BB bench press|B~Back~DB single arm row|C~Triceps~DB tricep overhead extension|D~Circuit 2
+W|Workout 3|A~Quads~BB back squat|B~Hamstrings~BB RDL|C~Glutes~Arabesque (S/L deadlift)|D~Circuit 3
+W|Workout 4|A~Back~BB bent over row|B~Shoulders~BB overhead press|C~Biceps~DB bicep curl|D~Circuit 4
+@lr|Advanced|tsul|opt=1|path=f|name=Upper/lower|by=core|tags=gym,strength|about=Two lower and three upper sessions. A heavy first lift of 5 to 10 reps, lighter work up to 20, then five rounds of a circuit.|days=0,1,3,4,5|rounds=5|time=30-45s|A=4:5-10|B=3:10-15|C=3:15-20+|extra=Wed · cardio of your choice|for=2+ years of training
+W|Lower A|A~Glutes~BB deadlift|B~Quads~RB TKE|C~Hamstrings~Machine seated hamstring curl|D~Circuit 9
+W|Upper A|A~Chest~BB bench press|B~Back~DB single arm row|C~Biceps~DB bicep curl|D~Circuit 6
+W|Upper B|A~Back~BB bent over row|B~Chest~Close grip bench press|C~Back~Rack pull up|D~Circuit 13
+W|Lower B|A~Hamstrings~BB RDL (snatch grip)|B~Quads~Alternating lateral lunge|C~Calves~Single-leg calf raise|D~Circuit 13
+W|Upper C|A~Shoulders~BB overhead press|B~Chest~Cable chest fly|C~Triceps~Cable tricep extension|D~Circuit 33
+@lr|Advanced|tsppl|opt=2|path=f|name=Push/pull/legs|by=core|tags=gym,muscle|about=Push, pull and legs over five sessions, heaviest lift first each day, then five rounds of a circuit.|days=0,1,3,4,5|rounds=5|time=30-45s|A=4:5-10|B=3:10-15|C=3:15-20+|extra=Wed · cardio of your choice|for=2+ years of training
+W|Push A|A~Chest~BB bench press|B~Chest~Cable chest fly|C~Triceps~Cable overhead tricep extension|D~Circuit 9
+W|Pull A|A~Hamstrings~BB RDL|B~Back~DB single arm row|C~Biceps~DB bicep curl|D~Circuit 6
+W|Push B|A~Shoulders~BB overhead press|B~Chest~Close grip bench press|C~Calves~Single-leg calf raise|D~Circuit 11
+W|Pull B|A~Back~BB bent over row|B~Hamstrings~Machine lying hamstring curl|C~Back~Rack pull up|D~Circuit 13
+W|Legs|A~Quads~BB back squat|B~Glutes~Cable standing hip extension|C~Quads~Machine leg extension|D~Circuit 28
+@lr|Advanced|tsbps|opt=3|path=f|name=Body part split|by=core|tags=gym,muscle|about=One focus a day: quads, chest, back, arms and glutes. Each gets a heavy lift, two lighter ones and a five-round circuit.|days=0,1,3,4,5|rounds=5|time=30-45s|A=4:5-10|B=3:10-15|C=3:15-20+|extra=Wed · cardio of your choice|for=2+ years of training
+W|Quads|A~Quads~BB back squat|B~Quads~Alternating reverse lunge|C~Calves~Single-leg calf raise|D~Circuit 9
+W|Chest|A~Chest~BB bench press|B~Chest~DB incline press|C~Chest~Cable chest fly|D~Circuit 6
+W|Back|A~Back~BB bent over row|B~Back~Rack pull up|C~Back~DB single arm row|D~Circuit 11
+W|Arms|A~Shoulders~BB overhead press|B~Biceps~BB bicep curl|C~Triceps~BB skull crusher|D~Circuit 13
+W|Glutes|A~Glutes~BB deadlift|B~Hamstrings~Hamstring curl (swiss ball)|C~Hamstrings~Machine seated hamstring curl|D~Circuit 28`;
 
 /* Start Stretching routine (Build Size & Strength sheet), 30 seconds each */
 const STRETCHES=[['Forward fold','Feet a little wider than hips, toes out. Hold each elbow and fold forward, rocking gently.'],['Cobra stretch','Lie on your stomach, lift your chest and look up. Shoulders away from ears.'],['Pretzel, right','On your stomach, right knee up to the side. Twist and reach back for your left foot.'],['Pretzel, left','Same again, other side.'],['Shoulder extension','Sit, hands behind you, and slide your hips away from your hands.'],['Butterfly','Sit, soles of the feet together, chest tilts forward.'],['90/90, right','Sit with both knees bent to 90 degrees.'],['Glute stretch, right','From 90/90, bring your chest towards the front knee.'],['90/90, left','Swap sides.'],['Glute stretch, left','Chest towards the other knee.'],['Deep squat','Sink into a deep squat, hands on the floor between your feet. Lift your heels if you need to.']];
@@ -1382,7 +1431,25 @@ const CIRC_META=`1|3,6|Full body|S
 32|9|Lower body|
 33||Full body|LS
 34|4|Upper body|O
-35||Lower body|LD`;
+35||Lower body|LD
+36|9|Lower body|
+37|4|Full body|OLS
+38||Full body|S
+39|4|Full body|OSJ
+40||Core|
+41||Lower body|S
+42|3|Full body|O
+43|2|Full body|SD
+44|3|Upper body|
+45|9|Upper body|OS
+46|3|Full body|OLS
+47|8|Full body|
+48|4|Full body|OLD
+49|6|Full body|
+50|9|Lower body|
+51|3|Upper body|O
+52||Core|
+53||Core|`;
 CIRC_META.split('\n').forEach(l=>{const [n,e,f,mv]=l.split('|');const C=CIRCUITS['Circuit '+n];C.eq=e?e.split(',').map(Number):[];C.focus=f;C.mv=mv||'';});
 const CIRC_FOCI=['All','Full body','Upper body','Lower body','Arms','Core'];
 const PROGS={};
@@ -1397,7 +1464,7 @@ const PROGS={};
       const n=weeks.length;const arr=s=>{const a=String(s).split('/');return weeks.map((_,i)=>a[Math.min(i,a.length-1)]);};
       const pat={};['A','B','C'].forEach(k=>{if(o[k]){const [s,r]=o[k].split(':');pat[k]={sets:arr(s).map(Number),reps:arr(r)};}});
       cur={id:fam+'|'+level+'|'+block,fam,level,block,weeks,n,days:(o.days||'0,1,3,4,5').split(',').map(Number),extra:o.extra||'',forWho:o.for||'',edited:o.src==='edited',
-        opt:+(o.opt||0),title:o.name||level,about:o.about||'',tags:(o.tags||'').split(',').filter(Boolean),core:o.by==='core',
+        opt:+(o.opt||0),title:o.name||level,about:o.about||'',tags:(o.tags||'').split(',').filter(Boolean),core:o.by==='core',path:o.path||'',
         rounds:o.rounds?arr(o.rounds):null,time:o.time?arr(o.time):null,workouts:[],arr,sets:o.sets||'3',pat};
       PROGS[cur.id]=cur;return;
     }
@@ -1412,12 +1479,22 @@ const PROGS={};
   });
 })();
 const FAM={lr:{name:'Lean & Ripped',style:'Circuits + weights',blurb:'Three lifts, then a fast 4-move circuit. Builds strength and fitness together.'},ss:{name:'Size & Strength',style:'Straight sets',blurb:'Six lifts plus core. Every set of one move before the next, with full rest. Built for muscle and strength.'}};
+/* Two paths through the app, set by the male or female answer when a person is added (p.sex, which the body-fat formulas also use).
+   Options tagged path=m are offered only on the male path (the Lean & Ripped blocks), path=f only on the female path
+   (the Tone & Shape blocks). Everything else, the extra options, straight sets and the deload, is offered on both. */
+const pathOf=p=>p&&p.sex==='F'?'f':'m';
+const onPath=(P,path)=>!P.path||P.path===path;
+/* The circuits family is Lean & Ripped on the male path and Tone & Shape on the female path */
+const FAM_F={lr:{name:'Tone & Shape',style:'Circuits + weights',blurb:'Three lifts, then a 4-move circuit to lift your heart rate. Burns fat and builds strength together.'}};
+const famInfo=(fam,path)=>(path==='f'&&FAM_F[fam])||FAM[fam];
 const LEVELS=['Beginner','Intermediate','Advanced'];
 /* Equipment each option needs, worked out from its exercises and circuits */
 Object.values(PROGS).forEach(P=>{const s=new Set();P.workouts.forEach(w=>{w.slots.forEach(sl=>{const r=exRec(sl.ex);if(r&&r.e)s.add(r.e);});if(w.circuit)(CIRCUITS[w.circuit.name].eq||[]).forEach(e=>s.add(e));});P.needs=[...s].sort((a,b)=>a-b);});
 const EQ_SHORT=['','machines','kettlebell','dumbbells','barbell','cables','bench','chin-up bar','Swiss ball','bands','medicine ball','weight plate','TRX'];
 const needsText=P=>{const n=P.needs;if(n.includes(1)||n.includes(5))return 'Full gym';if(!n.length)return 'Bodyweight only';const t=n.map(i=>EQ_SHORT[i]);return t.length>4?'Small gym':t.join(', ').replace(/^./,c=>c.toUpperCase());};
-const optsFor=(fam,level)=>Object.values(PROGS).filter(P=>P.fam===fam&&P.level===level).sort((a,b)=>a.opt-b.opt);
+const optsFor=(fam,level,path)=>Object.values(PROGS).filter(P=>P.fam===fam&&P.level===level&&onPath(P,path)).sort((a,b)=>a.opt-b.opt);
+/* Options are numbered from 1 on each path, in programme order, so the female path doesn't skip numbers */
+const optNum=(Q,path)=>{if(Q.block==='deload')return 'D';const i=optsFor(Q.fam,Q.level,path).indexOf(Q);return i<0?Q.opt:i+1;};
 const DELOAD_ID='ss|Deload week|deload';
 const LEVEL_HINT={Beginner:'Beginner: new to lifting, or back after a year off.',Intermediate:'Intermediate: 6 months in, with a solid squat, deadlift and bench press.',Advanced:'Advanced: a year or more in, with 10 chin-ups and 20 push-ups in a row. Under-18s should only do the 3 to 5 rep options with a qualified coach watching.'};
 const GOAL_TAG={strength:'strength',muscle:'muscle',sport:'sport',fitness:'fitness',technique:'technique',lean:'fitness'};
@@ -1443,7 +1520,7 @@ const QS=[
   {k:'goals',q:'What do you want most from the next 12 weeks?',hint:'Pick up to two.',multi:2,opts:PRESETS.map(x=>[x.id,x.name,x.blurb])},
   {k:'exp',q:'How long have you been lifting weights regularly?',opts:[['new','Never, or only a few times'],['lt6','Less than 6 months'],['6to12','6 to 12 months'],['1to2','1 to 2 years'],['gt2','More than 2 years']]},
   {k:'can',q:'Which of these can you do with good form?',hint:'These are the checks for each level. Pick all that apply, or none.',multi:3,optional:true,opts:[['sdb','Squat, deadlift and bench press'],['push20','20 push-ups in a row'],['chin10','10 chin-ups in a row']]},
-  {k:'coach',q:'Who is usually with you when you train?',opts:[['alone','Just me'],['buddy','Dad or a mate'],['coach','A coach or PT']]},
+  {k:'coach',q:'Who is usually with you when you train?',opts:[['alone','Just me'],['buddy','A parent or a mate'],['coach','A coach or PT']]},
   {k:'days',q:'How many days a week can you really train?',hint:'Think about school, sport and exams.',opts:[['2','2 days'],['3','3 days'],['4','4 days'],['5','5 days']]},
   {k:'mins',q:'How long have you got per session?',opts:[['30','About 30 minutes'],['45','About 45 minutes'],['60','An hour or more']]},
   {k:'where',q:'Where will you train most?',opts:[['home','At home','Dumbbells, bands and a bench'],['small','School or small gym','Barbells, dumbbells, kettlebells, a chin-up bar'],['gym','Full gym','Cables, machines, the lot']]},
@@ -1491,7 +1568,7 @@ const uid=()=>Math.random().toString(36).slice(2,9);
 const yt=v=>'https://youtu.be/'+v;
 /* Video IDs are each checked to play. The two styles link different BB RDL videos, so Lean & Ripped uses its own. Moves with no linked video (machines, TRX, pull-up) fall back to a YouTube search. */
 const VID_LR={'BB RDL':'H2XW6XnlLyo'};
-const vidUrl=n=>{const p=prof();const P=p?progOf(p):null;const r=exRec(n);const v=(P&&P.fam==='lr'&&VID_LR[r?r.n:n])||(r&&r.v);return v?yt(v):'https://www.youtube.com/results?search_query='+encodeURIComponent(n+' exercise technique');};
+const vidUrl=n=>{const p=prof();const P=p?progOf(p):null;const r=exRec(n);const v=(P&&P.fam==='lr'&&pathOf(p)==='m'&&VID_LR[r?r.n:n])||(r&&r.v);return v?yt(v):'https://www.youtube.com/results?search_query='+encodeURIComponent(n+' exercise technique');};
 const plateOf=wid=>PLATE[(parseInt(wid.slice(1),10)-1)%5];
 const clone=o=>JSON.parse(JSON.stringify(o));
 
@@ -1551,7 +1628,7 @@ function migrate(s){
 }
 function save(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
 let state=load()||seed();
-const ui={mode:null,open:null,bodyMetric:'weight',progEx:null,progMetric:'top',st:null,tickAt:{},openAt:{},tabY:{},lockY:0,locked:false,undo:null,sheetOpen:false,sheetFrom:null,woOpen:false,swapSid:null,swapQ:'',planFam:null,planLevel:null,circF:'All',lgType:'kg',setup:null,player:null,hiit:null,noteOpen:{},notePop:new Set()};
+const ui={mode:null,open:null,bodyMetric:'weight',progEx:null,progMetric:'top',st:null,tickAt:{},openAt:{},tabY:{},lockY:0,locked:false,undo:null,sheetOpen:false,sheetFrom:null,woOpen:false,swapSid:null,swapQ:'',planFam:null,planLevel:null,circF:'All',lgType:'kg',setup:null,player:null,hiit:null,noteOpen:{},notePop:new Set(),newSex:{}};
 
 const prof=()=>(state.active&&state.profiles[state.active])||null;
 function addProfile(pr){pr.c=Object.keys(state.profiles).length%AVC.length;state.profiles[pr.id]=pr;state.active=pr.id;state.tab='train';ui.planFam=null;ui.progEx=null;save();render();}
@@ -1562,7 +1639,7 @@ const sk=(p,week,wid)=>`${p.plan.prog}|${week}|${wid}`;
 const sess=(p,week,wid)=>p.sessions[sk(p,week,wid)];
 const progLabel=P=>P.block==='deload'?'Deload week':`${P.level} · ${P.title}`;
 const weekLabel=(P,w)=>P.block==='deload'?'Deload':`Week ${w} of 4`;
-const progShort=P=>`${FAM[P.fam].name} · ${progLabel(P)}`;
+const progShort=(P,p)=>`${famInfo(P.fam,pathOf(p||prof())).name} · ${progLabel(P)}`;
 
 /* ================= Plan logic ================= */
 function blocked(p,name){
@@ -1756,11 +1833,48 @@ const ADULT_SRC=[
   ['Bloody Legend','One level from the top.'],
   ['Absolute Weapon','Top of the club, mate. Nothing left to prove.']
 ];
+/* The adult names on the female path: just as cheeky and rude, written for women. Same 30 levels, same XP. */
+const ADULT_SRC_F=[
+  ['Mum Bod','Everyone starts somewhere. Some start with a muffin top.'],
+  ["Wine O'Clock Dropout",'Swapped the 5pm wine for squats. Mostly.'],
+  ['Jelly Legs','Leg day happened. Sitting on the loo is now a squat test.'],
+  ['Sports Bra Wrestler','Getting it off after a session counts as cardio.'],
+  ['Hot Mess','Five sessions in. Hair wrecked. Still breathing. Just.'],
+  ['Sweaty Betty','Glowing? No. Absolutely dripping.'],
+  ['Leggings Legend','Squat-proof and proud of it.'],
+  ['Mirror Selfie Addict',"Can't walk past a mirror now."],
+  ['Grunt Queen','Every rep comes with sound effects. Loud ones.'],
+  ['Gym Bunny',"You know the cleaner's name."],
+  ['Protein Princess','Clearing rooms since the third shake.'],
+  ['Rack Thief','The blokes can wait. The squat rack is yours.'],
+  ['Booty Patrol','Jeans are fitting different.'],
+  ['Thunder Thighs','Thigh gap? Never heard of her.'],
+  ['Buns of Bloody Steel','Halfway up, and your glutes have opinions.'],
+  ['Hip Thrust Hog','Hogging the hip thrust and not sorry.'],
+  ['Squat Witch','Depth is not optional. Neither is swearing.'],
+  ['Deadlift She-Devil','Pulling heavy, swearing louder.'],
+  ['Snatched AF','The abs are making an appearance.'],
+  ['Tough as Bloody Nails','Welcome to the hard yards.'],
+  ['Boss Bitch','Solid. Unshakeable. Slightly confronting.'],
+  ['Lioness','Feed after sessions. Do not approach.'],
+  ['Mumma Bear','Strong, protective and slightly terrifying.'],
+  ['Bloody Superwoman','Capes optional. Biceps not.'],
+  ['Queen of Pain','People stop and watch.'],
+  ['Amazon','Normal clothes have given up.'],
+  ['Hench Wench','The gym floor answers to you.'],
+  ['Alpha Female','Everyone else is fighting for second.'],
+  ['Bloody Queen','One level from the top.'],
+  ['Goddess of the Bloody Gym','Top of the club, love. Nothing left to prove.']
+];
 const LADDER_ADULT=LADDER.map((l,i)=>Object.assign({},l,{name:ADULT_SRC[i][0],line:ADULT_SRC[i][1]}));
+const LADDER_ADULT_F=LADDER.map((l,i)=>Object.assign({},l,{name:ADULT_SRC_F[i][0],line:ADULT_SRC_F[i][1]}));
+/* The standard names are the same on both paths, apart from the two with a male title */
+const FUN_F={'Barbell Baron':['Barbell Baroness','Owner of the heavy bar.'],'Pump Lord':['Pump Queen','The pump answers to you.']};
+const LADDER_F=LADDER.map(l=>FUN_F[l.name]?Object.assign({},l,{name:FUN_F[l.name][0],line:FUN_F[l.name][1]}):l);
 const adultNames=p=>!!(p&&p.names==='adult');
-const ladderFor=p=>adultNames(p)?LADDER_ADULT:LADDER;
+const ladderFor=p=>pathOf(p)==='f'?(adultNames(p)?LADDER_ADULT_F:LADDER_F):(adultNames(p)?LADDER_ADULT:LADDER);
 /* Adult names stay a surprise: a level's name shows only once it's reached (the list locks the rest, "XP to level N" leaves it off) */
-const namesHidden=g=>g.ladder===LADDER_ADULT;
+const namesHidden=g=>g.ladder===LADDER_ADULT||g.ladder===LADDER_ADULT_F;
 const WEEK_LEVEL=20;               /* from here a level takes about a week of training */
 const ELITE_FROM=MAX_LEVEL-9;      /* the last ten levels */
 const ladderAt=n=>LADDER[Math.max(1,Math.min(n,MAX_LEVEL))-1];
@@ -2117,10 +2231,17 @@ function header(){
   return hint+`<header class="top"><div class="brand">${IC.logo}<span class="brand-name">PR Club</span></div>
   <div class="top-r"><button type="button" class="lvl-chip" data-act="tab" data-id="progress" aria-label="Level ${g.level}. Open records">LVL ${g.level}</button><div class="who"><button type="button" class="who-btn on" data-act="settings" aria-label="Settings. ${esc(p.name)} is training">${avatar(p)}<span class="nm">${esc(p.name)}</span><span class="gear">${IC.gear}</span></button></div></div></header>`;
 }
+/* The male or female question asked when a person is added (k: which form it belongs to). Nothing is picked until they choose. */
+function sexPickHTML(k){const v=ui.newSex[k];
+  return `<div class="lab" id="${k}-sex-l">Male or female?<div class="seg" role="group" aria-labelledby="${k}-sex-l">${[['M','Male'],['F','Female']].map(([x,l])=>`<button type="button" class="${v===x?'on':''}" data-act="sexpick" data-k="${k}" data-v="${x}" aria-pressed="${v===x}">${l}</button>`).join('')}</div><span class="hint">${k==='w'?'Sets the workouts and level names on offer. You can change it later in Settings.':'Sets the workouts and level names on offer for them.'}</span></div>`;}
+/* Changing the answer: the programmes and level names on offer follow it. The current block carries on until a new one is picked. */
+function setSex(p,v,quiet){if(!p||(v!=='M'&&v!=='F')||p.sex===v)return;p.sex=v;ui.planFam=null;save();render();if(quiet)return;
+  const P=progOf(p);const keep=P&&!onPath(P,pathOf(p));
+  toast(`${v==='F'?'Female':'Male'} programmes and level names on.${keep?' Your current block carries on until you pick a new one on the Plan tab.':''}`);}
 function welcomeView(){
   return `<header class="top"><div class="brand">${IC.logo}<span class="brand-name">PR Club</span></div></header>
-  <section class="hero" style="grid-template-columns:1fr"><div><div class="eyebrow" style="color:var(--accent)">Train in 4-week blocks</div><h1>Join the club</h1></div><p class="sub">Two styles of training: Lean & Ripped and Build Size & Strength. Every workout earns XP, every record gets celebrated, and badges show how far you've come.</p></section>
-  <section class="card"><label class="lab" for="w-name">What's your name?<input class="field" id="w-name" maxlength="20" autocomplete="given-name" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="First name"></label><button type="button" class="btn block" data-act="start">Start</button><p class="hint">Tap your name at the top any time to open Settings, where you can add someone else, like a training partner.</p></section>
+  <section class="hero" style="grid-template-columns:1fr"><div><div class="eyebrow" style="color:var(--accent)">Train in 4-week blocks</div><h1>Join the club</h1></div><p class="sub">Two styles of training: lifts with a fast circuit, or straight sets. Every workout earns XP, every record gets celebrated, and badges show how far you've come.</p></section>
+  <section class="card"><label class="lab" for="w-name">What's your name?<input class="field" id="w-name" maxlength="20" autocomplete="given-name" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="First name"></label>${sexPickHTML('w')}<button type="button" class="btn block" data-act="start">Start</button><p class="hint">Tap your name at the top any time to open Settings, where you can add someone else, like a training partner.</p></section>
   <section class="card"><div class="sec-h"><h2>Just looking?</h2></div><p class="hint">Load a sample lifter with three weeks of logged workouts and body measurements, so every screen has something in it.</p><button type="button" class="btn ghost" data-act="sample">Load sample data</button></section>`;
 }
 /* Settings: one sheet, opened from your name in the header (and from the foot of the Plan tab).
@@ -2150,10 +2271,11 @@ function settingsSheet(confirm){
   const cf=(id,msg,yes,act)=>`<div class="confirm" id="cf"><p>${msg}</p><div class="row"><button type="button" class="btn ghost sm" data-act="settings">Cancel</button><button type="button" class="btn sm danger" data-act="${act}">${yes}</button></div></div>`;
   sheet(`<h3>Settings</h3>
   <div class="set-sec first"><h4>Who's training</h4>
-  <div class="plist">${Object.values(state.profiles).map(q=>{const on=p&&q.id===p.id;const qg=game(q);return `<button type="button" class="pcard${on?' cur':''}" data-act="switch" data-id="${q.id}" aria-pressed="${on}"><span style="display:flex;gap:10px;align-items:center;min-width:0">${avatar(q)}<span style="min-width:0"><b>${esc(q.name)}</b><small>Level ${qg.level}${adultNames(q)?'':' '+esc(qg.lv.name)} · ${q.plan?esc(progShort(PROGS[q.plan.prog])):'No plan yet'}</small></span></span>${on?'<span class="pill next">Active</span>':''}</button>`;}).join('')}</div>
-  <div class="inline-add"><input class="field" id="np-name" maxlength="20" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Add a person" aria-label="New person's name"><button type="button" class="btn sm" data-act="addp">Add</button></div></div>
+  <div class="plist">${Object.values(state.profiles).map(q=>{const on=p&&q.id===p.id;const qg=game(q);return `<button type="button" class="pcard${on?' cur':''}" data-act="switch" data-id="${q.id}" aria-pressed="${on}"><span style="display:flex;gap:10px;align-items:center;min-width:0">${avatar(q)}<span style="min-width:0"><b>${esc(q.name)}</b><small>Level ${qg.level}${adultNames(q)?'':' '+esc(qg.lv.name)} · ${q.plan?esc(progShort(PROGS[q.plan.prog],q)):'No plan yet'}</small></span></span>${on?'<span class="pill next">Active</span>':''}</button>`;}).join('')}</div>
+  <div class="inline-add"><input class="field" id="np-name" maxlength="20" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Add a person" aria-label="New person's name"><button type="button" class="btn sm" data-act="addp">Add</button></div>${sexPickHTML('np')}</div>
   ${p?`<div class="set-sec"><h4>${esc(p.name)}</h4>
     <div class="inline-add"><input class="field" id="rn-name" maxlength="20" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" value="${esc(p.name)}" aria-label="Name"><button type="button" class="btn ghost sm" data-act="renamep">Save name</button></div>
+    <div class="lab">Programmes<div class="seg" role="group" aria-label="${esc(p.name)}'s programmes">${[['M','Male'],['F','Female']].map(([v,l])=>`<button type="button" class="${p.sex===v?'on':''}" data-act="setsex" data-v="${v}" aria-pressed="${p.sex===v}">${l}</button>`).join('')}</div><span class="hint">Sets the workouts and level names on offer. The body-fat formulas use it too.</span></div>
     <label class="switch"><input type="checkbox" id="lv-adult" ${adultNames(p)?'checked':''}><span>Adult level names: cheeky gym slang with mild swearing. They show on ${esc(p.name)}'s own screens, not in the list above.</span></label>
     <div class="set-row"><span class="set-lv" style="color:${g.lv.tier.c}">${g.level}</span><span><b>${esc(g.lv.name)}</b><small>${g.xp.toLocaleString('en-AU')} XP${p.lvReset?` since ${fmtD(p.lvReset.date)} · ${g.xpAll.toLocaleString('en-AU')} lifetime`:''}</small></span></div>
     ${confirm==='lv'?cf('lv',`Reset ${esc(p.name)} to level 1, ${esc(ladderFor(p)[0].name)}? Workouts, records, badges and streaks all stay. Only the level climb starts again.`,'Reset levels','lvreset-yes')
@@ -2199,7 +2321,7 @@ function trainView(){
   const nextId=(ws.find(x=>!(sess(p,p.week,x.id)||{}).done)||{}).id;
   const imported=ws.some(x=>(sess(p,p.week,x.id)||{}).imported);
   const wg=p.goals.weekly;const g=game(p);
-  let h=playerCard(p,g)+`<section class="hero"><div><div class="eyebrow" style="color:var(--accent)">${esc(FAM[P.fam].name)} · ${esc(progLabel(P))}</div><h1>${weekLabel(P,p.week)}</h1></div>${ring(done,ws.length*weeks.length)}
+  let h=playerCard(p,g)+`<section class="hero"><div><div class="eyebrow" style="color:var(--accent)">${esc(famInfo(P.fam,pathOf(p)).name)} · ${esc(progLabel(P))}</div><h1>${weekLabel(P,p.week)}</h1></div>${ring(done,ws.length*weeks.length)}
   <p class="sub">${weekDone} of ${ws.length} quests done this week${weekDone<ws.length?` · finish them all for <span class="xpt">+${XP.week} XP</span>`:' · <span class="xpt">full week bonus earned</span>'}${wg&&wg.target?` · goal ${wg.target} a week`:''}</p></section>`;
   if(weeks.length>1)h+=`<div class="weeks" role="group" aria-label="Week">${weeks.map(w=>`<button type="button" class="wk${w===p.week?' on':''}" data-act="week" data-w="${w}" aria-pressed="${w===p.week}"><b>W${w}</b><span class="dots">${ws.map(x=>`<i class="${(sess(p,w,x.id)||{}).done?'on':''}"></i>`).join('')}</span></button>`).join('')}</div>`;
   const wi=weeks.indexOf(p.week);
@@ -2326,19 +2448,19 @@ function workoutHTML(){
 
 function planView(){
   const p=prof();const P=progOf(p);
-  const fam=ui.planFam||(P?P.fam:'lr');
+  const fam=ui.planFam||(P?P.fam:'lr');const path=pathOf(p);
   let h='';
   h+=`<section class="card"><div class="sec-h"><h2>Goals & setup</h2>${p.setup?'<button type="button" class="link" data-act="setup">Redo questions</button>':''}</div>
   ${p.setup?`<div class="chips">${p.setup.answers.goals.map(g=>`<span class="chip soft">${esc(PRESETS.find(x=>x.id===g).name)}</span>`).join('')}</div><p class="hint">Recommended: ${esc(p.setup.rec)}</p>`:`<p class="hint">Answer 11 quick questions to get a recommended style, level, days per week and starter goals.</p><button type="button" class="btn" data-act="setup">Answer the questions</button>`}</section>`;
   h+=`<section class="card"><div class="sec-h"><h2>Programme</h2><span class="sec-note">${P?esc(progShort(P)):'Nothing picked yet'}</span></div>
-  <div class="seg" role="group" aria-label="Training style">${['lr','ss'].map(f=>`<button type="button" class="${fam===f?'on':''}" data-act="pfam" data-f="${f}" aria-pressed="${fam===f}">${FAM[f].style}</button>`).join('')}</div>
-  <p class="hint">${esc(FAM[fam].blurb)}</p>`;
+  <div class="seg" role="group" aria-label="Training style">${['lr','ss'].map(f=>`<button type="button" class="${fam===f?'on':''}" data-act="pfam" data-f="${f}" aria-pressed="${fam===f}">${famInfo(f,path).style}</button>`).join('')}</div>
+  <p class="hint">${esc(famInfo(fam,path).blurb)}</p>`;
   const lvl=ui.planLevel||(P&&LEVELS.includes(P.level)?P.level:'Beginner');
-  const list=optsFor(fam,lvl).concat(fam==='ss'?[PROGS[DELOAD_ID]]:[]);
+  const list=optsFor(fam,lvl,path).concat(fam==='ss'?[PROGS[DELOAD_ID]]:[]);
   h+=`<div class="seg" role="group" aria-label="Level" style="margin-top:10px">${LEVELS.map(L=>`<button type="button" class="${lvl===L?'on':''}" data-act="plevel" data-l="${L}" aria-pressed="${lvl===L}">${L}</button>`).join('')}</div>
   <p class="hint">${esc(LEVEL_HINT[lvl])}${lvl==='Advanced'&&p.setup&&!['push20','chin10'].every(x=>(p.setup.answers.can||[]).includes(x))?" Your setup answers don't tick the chin-up and push-up checks yet.":''} Each option is a 4-week block.</p>
   <div class="plist">${list.map(Q=>{const cur=p.plan&&p.plan.prog===Q.id;const fl=progFlags(p,Q);const nd=Q.workouts.length;
-    return `<button type="button" class="pcard ocard${cur?' cur':''}" data-act="pick" data-id="${Q.id}" aria-pressed="${cur}"><span class="onum">${Q.opt||'D'}</span><span class="ob"><b>${esc(Q.title)}</b><small>${nd} day${nd>1?'s':''} a week · ${esc(needsText(Q))}</small><small class="oa">${esc(Q.about)}</small>${fl?`<small class="bad">${fl} move${fl>1?'s':''} would be swapped for your equipment</small>`:''}</span>${cur?'<span class="pill next">Current</span>':''}</button>`;}).join('')}</div>`;
+    return `<button type="button" class="pcard ocard${cur?' cur':''}" data-act="pick" data-id="${Q.id}" aria-pressed="${cur}"><span class="onum">${optNum(Q,path)}</span><span class="ob"><b>${esc(Q.title)}</b><small>${nd} day${nd>1?'s':''} a week · ${esc(needsText(Q))}</small><small class="oa">${esc(Q.about)}</small>${fl?`<small class="bad">${fl} move${fl>1?'s':''} would be swapped for your equipment</small>`:''}</span>${cur?'<span class="pill next">Current</span>':''}</button>`;}).join('')}</div>`;
   h+='</section>';
   if(!P)return h+settingsLink();
   const ws=planWorkouts(p),wi=Math.max(0,weeksOf(p).indexOf(p.week)),n=p.plan.active.length;
@@ -2347,7 +2469,7 @@ function planView(){
   <div class="chips" role="group" aria-label="Workouts kept">${P.workouts.map(w=>{const on=p.plan.active.includes(w.id);return `<button type="button" class="chip${on?'':' off'}" data-act="toggle" data-wid="${w.id}" aria-pressed="${on}"><span class="plate sm pl-${plateOf(w.id)}"></span>${esc(w.name)}</button>`;}).join('')}</div>
   <label class="switch"><input type="checkbox" id="carry" ${p.plan.carry?'checked':''}><span>Move the main lift from each dropped day into the days you keep</span></label>
   <label class="switch"><input type="checkbox" id="trim" ${p.plan.trim?'checked':''}><span>Short sessions: skip ${P.fam==='lr'?'exercise C':'the two lightest lifts'} each day</span></label>
-  <div class="sched">${schedule(p).map(x=>`<div>${x.d}${x.w?`<span class="plate sm pl-${plateOf(x.w.id)}"></span><i>${esc(x.w.name.replace('Workout ','W'))}</i>`:`<i>${x.cardio?(P.fam==='lr'?'HIIT':'Walk'):'Rest'}</i>`}</div>`).join('')}</div></section>`;
+  <div class="sched">${schedule(p).map(x=>`<div>${x.d}${x.w?`<span class="plate sm pl-${plateOf(x.w.id)}"></span><i>${esc(x.w.name.replace('Workout ','W'))}</i>`:`<i>${x.cardio?(/hiit/i.test(P.extra)?'HIIT':/walk/i.test(P.extra)?'Walk':'Cardio'):'Rest'}</i>`}</div>`).join('')}</div></section>`;
   const fc=flaggedCount(p);
   h+=`<section class="card"><div class="sec-h"><h2>Equipment & moves</h2><span class="sec-note">${fc?`<b style="color:var(--bad)">${fc} exercise${fc>1?'s':''} flagged</b>`:'Everything available'}</span></div>
   <p class="hint">Untick what you don't have. Exercises that need it get a red flag, and swap lists hide them.</p>
@@ -2430,7 +2552,7 @@ function bodyView(){
   h+=`<section class="card" id="body-settings"><div class="sec-h"><h2>Body settings</h2></div><div class="form">
   <label class="lab">Height (cm)${p.heightSample?' · sample':''}<input class="field" id="s-height" inputmode="decimal" value="${p.height?kgS(p.height):''}" placeholder="e.g. 175"></label>
   <label class="lab">Age (years)${p.heightSample?' · sample':''}<input class="field" id="s-age" inputmode="numeric" value="${p.age?Math.floor(ageOn(p,isoToday())):''}" placeholder="e.g. 15"></label>
-  <label class="lab full">Sex, used by the formulas<select class="field" id="s-sex"><option value="M"${p.sex==='M'?' selected':''}>Male</option><option value="F"${p.sex==='F'?' selected':''}>Female</option></select></label>
+  <label class="lab full">Sex, used by the formulas and for the programmes on offer<select class="field" id="s-sex"><option value="M"${p.sex==='M'?' selected':''}>Male</option><option value="F"${p.sex==='F'?' selected':''}>Female</option></select></label>
   <div class="full"><button type="button" class="btn ghost sm" data-act="savesettings">Save settings</button></div></div></section>`;
   /* Body fat sits last on the page, below the settings that feed it, so it isn't the first thing anyone sees */
   const B=last?bfAll(p,last):null;const firstE=ents.find(e=>bfAll(p,e).avg!=null);const B0=firstE?bfAll(p,firstE):null;
@@ -2589,7 +2711,7 @@ function recommend(a,force){
   if(force==null&&lvl==='Beginner'&&want>3){want=3;caps.push('new lifters do best on 2 or 3 days with a rest day between');}
   if(force==null&&a.sport==='in'&&want>3){want=3;caps.push('your sport is in season');}
   r.equip=EQUIP_PRESET[a.where];r.moves={O:a.sore!=='shoulder',L:a.sore!=='knee',S:true,D:a.sore!=='back',J:a.sore!=='knee'};
-  const pick=bestOption(r.fam,lvl,a,want,r.equip,r.moves);r.prog=pick.Q.id;r.why.prog=pick.why;
+  const pick=bestOption(r.fam,lvl,a,want,r.equip,r.moves,pathOf(prof()));r.prog=pick.Q.id;r.why.prog=pick.why;
   const P=PROGS[r.prog];const max=P.workouts.length;const d=Math.min(want,max);
   const drop=d<max?` The main lift from each dropped day moves into the others.`:'';
   r.days=d;r.capWhy=caps.join(' and ');r.why.days=caps.length?`You said ${a.days}, but ${caps.join(' and ')}.${drop}`:(+a.days>max?`This option has ${max} sessions a week.`:(d<max?`This option has ${max}.${drop}`:'Matches what you can fit in.'));
@@ -2602,11 +2724,11 @@ function recommend(a,force){
 }
 const TAG_WORD={strength:'strength',muscle:'muscle size',sport:'sport',fitness:'fitness',technique:'learning technique',inseason:'in-season training'};
 /* Pick the option at this level that best fits the answers: equipment first, then goals, days and where they train */
-function bestOption(fam,lvl,a,days,equip,moves){
+function bestOption(fam,lvl,a,days,equip,moves,path){
   const tmp={equip:Object.fromEntries(EQUIP.map((_,i)=>[i,equip.includes(i)])),moves};
   const want=new Set((a.goals||[]).map(g=>GOAL_TAG[g]));if(a.sport==='in')want.add('inseason');
   let best=null;
-  optsFor(fam,lvl).forEach(Q=>{
+  optsFor(fam,lvl,path).forEach(Q=>{
     const n=Q.workouts.length;const fl=progFlags(tmp,Q);const hits=Q.tags.filter(t=>want.has(t));
     /* swaps cost 1.5 each, a matching goal is worth 4, an exact day count 2; running a split on fewer days than it was built for unbalances it, so that costs 2.5 a day */
     const s=-fl*1.5+hits.length*4+(n===days?2:0)-(n<days?(days-n)*3:(n-days)*2.5)+(a.where!=='gym'&&Q.tags.includes(a.where)?3:0)+(Q.core?1:0)+(Q.opt===1?0.5:0)-(Q.tags.includes('inseason')&&a.sport!=='in'?20:0);
@@ -2616,7 +2738,7 @@ function bestOption(fam,lvl,a,days,equip,moves){
   if(best.hits.length)bits.push('built for '+best.hits.map(t=>TAG_WORD[t]).join(' and '));
   bits.push(best.fl?`${best.fl} move${best.fl>1?'s':''} swapped for your equipment`:'works with your equipment');
   bits.push(n===days?`${n} sessions a week, matching your days`:`${n} sessions a week`);
-  return {Q,why:`Option ${Q.opt}: ${bits.join(', ')}.`};
+  return {Q,why:`Option ${optNum(Q,path)}: ${bits.join(', ')}.`};
 }
 function applyCore(p,a,r){
   const P=PROGS[r.prog];
@@ -2667,7 +2789,7 @@ function resultsHTML(){
   st.picks.forEach(s=>{if(s.on)tmp.plan.swaps[s.sid]=s.to;});presetGoals(tmp,a,r);
   const P=PROGS[r.prog];
   let h=`<header class="wo-top"><div class="wo-row"><button type="button" class="back" data-act="su-back" aria-label="Previous question">${IC.back}</button><div class="wo-title"><h2>${esc(p.name)}'s plan</h2><p>Based on ${QS.length} answers</p></div></div></header>`;
-  h+=`<section class="card"><div class="rec"><span class="rk">Style</span><span class="rv">${esc(FAM[r.fam].style)} · ${esc(FAM[r.fam].name)}</span><p>${esc(r.why.fam)}</p></div>
+  h+=`<section class="card"><div class="rec"><span class="rk">Style</span><span class="rv">${esc(famInfo(r.fam,pathOf(p)).style)} · ${esc(famInfo(r.fam,pathOf(p)).name)}</span><p>${esc(r.why.fam)}</p></div>
   <div class="rec"><span class="rk">Start at</span><span class="rv">${esc(progLabel(P))}</span><p>${esc(r.why.level)}</p><p>${esc(r.why.prog)}</p></div>
   <div class="rec"><span class="rk">Days a week</span><span class="rv">${r.days} days${r.days!==r0.days?' · your choice':''}</span>
     <div class="seg" role="group" aria-label="Days a week">${Array.from({length:max-1},(_,i)=>i+2).map(d=>`<button type="button" class="${d===r.days?'on':''}" data-act="su-days" data-n="${d}" aria-pressed="${d===r.days}">${d}${d===r0.days?' · rec':''}</button>`).join('')}</div>
@@ -3308,7 +3430,7 @@ function swapRefresh(){
 function openCircuitSwap(wid){
   const p=prof();const w=planWorkouts(p).find(x=>x.id===wid);if(!w||!w.circuit)return;ui.swapSid=wid+'d';
   ui.circF='All';
-  sheet(`<h3>Swap ${esc(w.circuit.name)}</h3><p class="hint">Applies to the whole block. All 35 circuits, each with a follow-along video. Flagged ones need equipment or a movement you've switched off.</p>
+  sheet(`<h3>Swap ${esc(w.circuit.name)}</h3><p class="hint">Applies to the whole block. All ${CIRC_NAMES.length} circuits, each with a follow-along video. Flagged ones need equipment or a movement you've switched off.</p>
   <div class="circ-tools"><div class="chips" role="group" aria-label="Circuit focus">${CIRC_FOCI.map(f=>`<button type="button" class="chip${f===ui.circF?' on':''}" data-act="circf" data-f="${f}" aria-pressed="${f===ui.circF}">${f}</button>`).join('')}</div>
   <input type="search" class="field" id="circ-q" placeholder="Search by move, e.g. lunge or swing" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Search circuits"></div>
   <div class="opts" id="circ-list">${circList(p,w,'')}</div>`);
@@ -3331,7 +3453,11 @@ document.addEventListener('click',ev=>{
       ui.tabY[state.tab]=window.scrollY;state.tab=to;save();sheet('');render();window.scrollTo(0,fromBar?(ui.tabY[to]||0):0);break;}
     case 'settings':settingsSheet();break;
     case 'switch':state.active=a.dataset.id;ui.planFam=null;ui.progEx=null;save();sheet('');render();window.scrollTo(0,0);break;
-    case 'start':case 'addp':{const el=$(act==='start'?'#w-name':'#np-name');const n=cleanName(el&&el.value);if(!n){toast('Type a name first');if(el)el.focus();break;}sheet('');addProfile(blankProfile(uid(),n));toast(`Welcome, ${n}`);break;}
+    case 'start':case 'addp':{const el=$(act==='start'?'#w-name':'#np-name');const n=cleanName(el&&el.value);if(!n){toast('Type a name first');if(el)el.focus();break;}
+      const sx=ui.newSex[act==='start'?'w':'np'];if(!sx){toast('Choose male or female first');break;}
+      const pr=blankProfile(uid(),n);pr.sex=sx;ui.newSex={};sheet('');addProfile(pr);toast(`Welcome, ${n}`);break;}
+    case 'sexpick':{ui.newSex[a.dataset.k]=a.dataset.v;a.closest('.seg').querySelectorAll('button').forEach(b=>{const on=b===a;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});break;}
+    case 'setsex':setSex(p,a.dataset.v);settingsSheet();break;
     case 'sample':addProfile(sampleProfile());toast('Sample lifter loaded. Add your own name from the top any time.');break;
     case 'renamep':{const n=cleanName($('#rn-name').value);if(!n){toast('Type a name first');break;}p.name=n;save();sheet('');render();toast('Name saved');break;}
     case 'delp':settingsSheet('del');break;
@@ -3429,7 +3555,7 @@ document.addEventListener('click',ev=>{
       const g1=game(p);toast(g1.xp>g0.xp?`Entry saved · +${g1.xp-g0.xp} XP`:'Entry saved for '+fmtD(date));celebrateLevels(p,500);break;}
     case 'delbody':{const d=a.dataset.d;const gone=p.body.find(x=>x.date===d);p.body=p.body.filter(x=>x.date!==d);save();render();if(gone)toast(`Entry for ${fmtD(d)} deleted`,()=>{p.body.push(gone);});break;}
     case 'clearsamples':p.body=p.body.filter(x=>!x.sample);Object.keys(p.goals.metrics).forEach(k=>{if(p.goals.metrics[k].sample)delete p.goals.metrics[k];});p.goals.lifts=p.goals.lifts.filter(g=>!g.sample);if(p.goals.weekly&&p.goals.weekly.sample)p.goals.weekly=null;if(p.heightSample){p.height=null;p.age=null;p.ageAt=null;p.heightSample=false;}save();render();toast('Sample entries cleared');break;
-    case 'savesettings':{p.height=num($('#s-height').value);{const a=num($('#s-age').value);if(a!==(p.age?Math.floor(ageOn(p,isoToday())):null)){p.age=a;p.ageAt=a?isoToday():null;}}p.heightSample=false;p.sex=$('#s-sex').value;save();render();toast('Settings saved');break;}
+    case 'savesettings':{p.height=num($('#s-height').value);{const a=num($('#s-age').value);if(a!==(p.age?Math.floor(ageOn(p,isoToday())):null)){p.age=a;p.ageAt=a?isoToday():null;}}p.heightSample=false;setSex(p,$('#s-sex').value,true);save();render();toast('Settings saved');break;}
     case 'pmetric':ui.progMetric=a.dataset.k;render();break;
     case 'lgtype':ui.lgType=a.dataset.t;render();break;
     case 'addlift':{const n=$('#lg-ex').value;const t=num($('#lg-t').value);if(!n||t==null){toast('Pick an exercise and a target');break;}
@@ -3446,7 +3572,7 @@ document.addEventListener('click',ev=>{
     case 'su-next':{const q=QS[ui.setup.step];if(!qValid(q,ui.setup.a))break;ui.setup.step++;ui.setup.picks=null;renderOverlay();$('#wo').scrollTop=0;break;}
     case 'su-days':ui.setup.days=+a.dataset.n;ui.setup.picks=null;renderOverlay();break;
     case 'su-apply':{const st=ui.setup;const {r0,r}=setupRec(st);applyCore(p,st.a,r);(st.picks||[]).forEach(s=>{if(s.on)p.plan.swaps[s.sid]=s.to;});presetGoals(p,st.a,r);
-      const P=PROGS[r.prog];p.setup={answers:clone(st.a),rec:`${FAM[r.fam].style} · ${progLabel(P)} · ${r.days} days a week${r.days!==r0.days?` (recommended ${r0.days})`:''}`,date:isoToday()};
+      const P=PROGS[r.prog];p.setup={answers:clone(st.a),rec:`${famInfo(r.fam,pathOf(p)).style} · ${progLabel(P)} · ${r.days} days a week${r.days!==r0.days?` (recommended ${r0.days})`:''}`,date:isoToday()};
       save();ui.setup=null;state.tab='train';closeOverlay();toast(`${p.name}'s plan is set`);break;}
     case 'hiit':ui.hiit=null;hiitSheet();break;
     case 'hiit-shuffle':ui.hiit=genHiit(p);hiitSheet();break;
